@@ -1,0 +1,10 @@
+#!/bin/bash
+#  SPDX-FileName: bashScript
+#  SPDX-FileComment: Template bash script
+#  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
+#  SPDX-License-Identifier: GPL-2.0-or-later
+
+# usage ./bashScript
+# test: cd bashTemplate/app bats ../testing/test_bash_script.bats
+
+echo Environment variable \$TEST_TEST_TEST: $TEST_TEST_TEST

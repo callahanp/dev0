@@ -1,0 +1,8 @@
+#!/bin/bash
+# /*
+#  SPDX-FileName: bashScript
+#  SPDX-FileComment: Template bash script
+#  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
+#  SPDX-License-Identifier: GPL-2.0-or-later
+#
+echo "bashScript"
