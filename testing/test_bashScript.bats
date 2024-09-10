@@ -9,33 +9,33 @@
 
 #bats_require_minimum_version 1.5.0
 setup_file() {
-echo "in setup_file"
+  DEV_SUITES_DIR=
 }
 
+
 @test "1. can run our script" {
+    DEV_SUITES_DIR=../test_data
     run ../app/bashScript
       i=0
   while [ $i -lt ${#lines[@]} ]; do
-    echo --${lines[$i]}--
+    echo ${lines[$i]}
     ((i=i+1))
   done
    [ "${lines[0]}" == 'Environment variable $TEST_TEST_TEST:' ]
   echo "# output: $output" >&3
-
 }
-
 
 @test "2. test env var " {
 
     export TEST_TEST_TEST="This was set in the test script before run"
     run ../app/bashScript
       i=0
-  while [ $i -lt ${#lines[@]} ]; do
-    echo --${lines[$i]}--
-    ((i=i+1))
-  done
-  echo "# output: $output" >&3
-     [ "${lines[0]}" == 'Environment variable $TEST_TEST_TEST: This was set in the test script before run' ]
+    while [ $i -lt ${#lines[@]} ]; do
+        echo --${lines[$i]}--
+        ((i=i+1))
+    done
+    echo "# output: $output" >&3
+    [ "${lines[0]}" == 'Environment variable $TEST_TEST_TEST: This was set in the test script before run' ]
 
 }
 

@@ -1,0 +1,133 @@
+{
+    "configurations": [
+      {
+        "type": "bashdb",
+        "request": "launch",
+        "name": "debug matchGitRepositories",
+        "cwd": "/work/suites/dev0/worktrees/dev0.next/testing",
+        "program": "${file}",
+        "args": [ "w"],
+        "terminalKind": "integrated",
+        "env": {
+                "DEV_SUITES_DIR": "../test_data"
+            }
+    }, {
+        "type": "bashdb",
+        "request": "launch",
+        "name": "ide dev0 next",
+        "cwd": "${workspaceFolder}",
+        "program": "${file}",
+        "args": ["ide", "dev0", "next"],
+        "terminalKind": "integrated",
+        "env": {
+            }
+    },
+    {
+        "type": "bashdb",
+        "request": "launch",
+        "name": "ide fg next",
+        "cwd": "${workspaceFolder}",
+        "program": "${file}",
+        "args": ["ide", "fg", "next"],
+        "terminalKind": "integrated",
+        "env": {
+            }
+    },
+    {
+        "type": "bashdb",
+        "request": "launch",
+        "name": "run with test_data",
+        "cwd": "/work/suites/dev0/worktrees/dev0.next/test_data",
+        "program": "${file}",
+        "args": [],
+        "terminalKind": "integrated",
+        "env": {
+                "DEV_SUITES_DIR": "/work/suites/dev0/worktrees/dev0.next/test_data"
+
+            }
+    },
+    {
+        "type": "bashdb",
+        "request": "launch",
+        "name": "debug build",
+        "cwd": "",
+        "program": "${file}",
+        "args": ["b", "fg", "2890", "Debug" ],
+        "terminalKind": "integrated",
+        "env": {
+                "DEV_SUITES_DIR": "/work/suites"
+            }
+    },
+    {
+        "type": "bashdb",
+        "request": "launch",
+        "name": "debug GitReferences",
+        "cwd": "",
+        "program": "${file}",
+        "args": ["-n","fg" ],
+        "terminalKind": "integrated",
+        "env": {
+                "DEV_SUITES_DIR": "/work/suites"
+            }
+    },
+    {
+        "type": "bashdb",
+        "request": "launch",
+        "name": "debug matchSuites",
+        "cwd": "",
+        "program": "${file}",
+        "args": [ "-n" ],
+        "terminalKind": "integrated",
+        "env": {
+                "DEV_SUITES_DIR": "/work/suites"
+            }
+    },
+    {
+        "type": "bashdb",
+        "request": "launch",
+        "name": "debug matchGitWorktrees",
+        "cwd": "",
+        "program": "${file}",
+        "args": [ "-p" ],
+        "terminalKind": "integrated",
+        "env": {
+                "DEV_SUITES_DIR": "/work/suites"
+            }
+    },    {
+      "type": "bashdb",
+      "request": "launch",
+      "name": "debug matchGitReferences",
+      "cwd": "",
+      "program": "${file}",
+      "args": [ "-n", "fg" ],
+      "terminalKind": "integrated",
+      "env": {
+              "DEV_SUITES_DIR": "/work/suites"
+          }
+  },
+    {
+        "type": "bashdb",
+        "request": "launch",
+        "name": "debug CMakeBuildTypes d",
+        "cwd": "",
+        "program": "${file}",
+        "args": ["d" ],
+        "terminalKind": "integrated",
+        "env": {
+                "DEV_SUITES_DIR": "/work/suites"
+            }
+    },
+    {
+        "type": "bashdb",
+        "request": "launch",
+        "name": "test suite",
+        "cwd": "",
+        "program": "${file}",
+        "args": ["f" ],
+        "terminalKind": "integrated",
+        "env": {
+                "DEV_SUITES_DIR": "/work/suites"
+            }
+    }
+    ]
+}

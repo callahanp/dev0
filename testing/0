@@ -1,0 +1,42 @@
+#!/bin/bash
+
+
+
+cd ../testing || { echo "Please cd to the dev0 testing directory"; exit 1; }
+testingHome=$(pwd)
+testDataHome=$(realpath ../test_data)
+
+mkdir -p ../testdata/tiny.git
+cd ../testdata/tiny.git || { echo "Unable to cd to ../testdata/tinygit. ";
+                            echo "That's a bit wierd considering we just created it." ; exit 1; }
+
+$ git init --initial-branch=next    #  Create a /path/to/my/codebase/.git directory.
+$ touch README.md  # this is the only existing file...
+$ git add .   #  add all existing files to the index.
+$ git commit   # Record the pristine state as the first commit in the history
+
+cd $scriptHome >/dev/null || { echo "Forgot where we were already?"; exit 1; }
+
+mkdir -p  "$testDataHome"/wwww/repositories
+mkdir -p "$testDataHome"/wwww/worktrees
+for suite in  wwww wxyz yyyy; do
+    rm -rf "${testDataHome:?}"/"${suite:?}"
+    mkdir -p  "$testDataHome"/"${suite}"/repositories
+    mkdir -p  "$testDataHome"/"${suite}"/worktrees
+    mkdir -p  "$testDataHome"/"${suite}"/project
+    mkdir -p  "$testDataHome"/"${suite}"/edit
+    cd "$testDataHome"/wwww/repositories ||{} echo "Can\'t Find $testDataHome /wwww/repositories???" exit 1;}
+    git clone --bare  "$testDataHome"/tiny.git wwww.git
+
+cat >{"$testDataHome"/"${suite}"/edit/"${suite}".next.code-workspace <<EOD
+  {
+    "folders": [
+      { "path": "../project"},
+      { "path": "../edits"},
+      { "path": "../worktrees/"${suite}".next"},
+      {"path": "./.vscode"}
+    ]
+  }
+EOD
+done
+

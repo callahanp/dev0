@@ -1,0 +1,91 @@
+#!/bin/bash
+# source $DEV_APP_DIR/Repositories [suite-name-filter]
+# source $DEV_APP_DIR/Repositories suite-name-filter [repository-name-filter]
+#set -x
+# path is default?
+case "$1" in
+    -n |--name)
+          name="name"; shift;
+          ;;
+    -p | -path)
+          name=""; shift;
+          ;;
+    default)
+          name="name"
+          ;;
+esac
+repos="repos"
+case "$1" in
+    -t |--trees | --tree | --worktree |--worktrees)
+          reposInTrees="reposInTrees"; shift;
+          ;;
+    -b | --build | --builds )
+          reposInBuilds="reposInBuilds"; shift;
+          ;;
+    -c | --code-workspaces | --workspaces | --edit )
+          reposInEdit="reposInWorkspaces"; shift;
+          ;;
+    default)
+          repos="repos"
+          ;;
+esac
+shopt -s nullglob nocaseglob
+declare -ag GitRepositories
+declare -a _repositoryPaths
+GitRepositories=()
+_repositoryPaths=()
+declare -a _suitePaths
+if [[ "$1" == "" ]]; then
+    _suitePaths=( "$DEV_SUITES_DIR"/*/ )
+else
+    if [[ -e "$DEV_SUITES_DIR"/"$1" ]]; then
+      _suitePaths=( "$DEV_SUITES_DIR"/"$1"/ )
+    else
+      _suitePaths=( "$DEV_SUITES_DIR"/*"$1"*/ )
+    fi
+fi
+
+for sp in "${_suitePaths[@]}"; do
+    if [ "$reposInTrees" ]; then echo "unimplemented feature select repos from worktrees"; fi
+    if [ "$reposInBuilds" ]; then echo "unimplemented feature select repos from "; fi
+    if [ "$reposInWorkspaces"  ]; then echo "unimplemented feature select repos from "; fi
+    if [ "$repos" ]; then
+    sp=${sp%/}
+    for reposDir in "$sp"/repositories; do
+        reposDir=${reposDir%/}
+        #echo $reposDir
+        if [[ "$2" != "" && -e $reposDir/"$2" ]]; then
+          _repositoryPaths+=( "$reposDir"/"$2" )
+        else
+          if [[ "$2" == "" ]]; then
+               _repositoryPaths+=( "$reposDir"/*/ )
+          else
+              _repositoryPaths+=( "$reposDir"/*"$2"*/ )
+          fi
+        fi
+    done
+    fi
+done
+
+#mapfile -t -d ' ' _repositoryPaths < <( echo "$DEV_SUITES_DIR"/*"$1"*/repositories/*$2*.git; )
+for rp in ${_repositoryPaths[@]}; do
+    rp=${rp%/} # <--- -name will be empty if you do not do this
+    if [ "$name" ]; then
+      GitRepositories+=("${rp##*/}") # name only
+    else
+      GitRepositories+=("${rp}") # path
+    fi
+done
+ readarray -t -d '' GitRepositories < <(printf '%s\0' "${GitRepositories[@]}" | sort -z);
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  for r in "${GitRepositories[@]}"; do echo "$r"; done;
+fi
+shopt -u nullglob nocaseglob
+set +x
+# Tests:
+#
+
+# $DEV_APP_DIR/matchGitRepositories fg
+# $DEV_APP_DIR/matchGitRepositories "" meta
+# $DEV_APP_DIR/matchGitRepositories "fg" meta
+# $DEV_APP_DIR/matchGitRepositories "notfound" meta

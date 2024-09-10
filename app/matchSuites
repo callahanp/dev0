@@ -1,0 +1,53 @@
+#!/bin/bash
+# shellcheck disable=SC2317
+
+# source $DEV_APP_DIR/SuiteName [suite-name-filter] [ [ "name" ] | "path" ]
+# source $DEV_APP_DIR/Repositories suite-name-filter [repository-name-filter]
+
+# nocaseglob, nullglob, globskipdots, failglob, and dotglob
+shopt -s nullglob nocaseglob
+declare -ag Suites
+Suites=()
+case "$1" in
+  -n |--name)
+    name="name"; shift;
+    ;;
+  -p | -path)
+    name=""; shift;
+    ;;
+  default)
+    name="name"
+    ;;
+esac
+declare -a _suitePaths
+if [[ "$1" == "" ]]; then
+    _suitePaths=( "$DEV_SUITES_DIR"/*/ )
+else
+    if [[ -e "$DEV_SUITES_DIR"/"$1" ]]; then
+      _suitePaths=( "$DEV_SUITES_DIR"/"$1"/ )
+    else
+      _suitePaths=( "$DEV_SUITES_DIR"/*"$1"*/ )
+    fi
+fi
+shopt -u nullglob nocaseglob
+for  sp in "${_suitePaths[@]}"; do
+  sp=${sp%/} # <--- -name will be empty if you do not do this
+  if [ "$name" ]; then
+    Suites+=("${sp##*/}") # name only
+  else
+    Suites+=("${sp}") # full path to suite
+  fi
+done
+# IFS=$'\n' Suites=( $(sort -u <<<"${Suites[*]}") )
+# IFS= find better example of how to do this.
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  for s in ${Suites[@]}; do echo $s; done;
+fi
+# no exit or return - can be sourced or called
+#Tests
+# "$DEV_APP_DIR/matchSuites"; echo $Suites
+# "$DEV_APP_DIR/matchSuites" fg
+# "$DEV_APP_DIR/matchSuites" f
+# "$DEV_APP_DIR/matchSuites" -n fg
+# "$DEV_APP_DIR/matchSuites" -p fg
+
