@@ -1,0 +1,45 @@
+#!/bin/bash
+#  SPDX-FileName: dev0/app/ide
+#  SPDX-FileComment:User by run and build commands
+#  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
+#  SPDX-License-Identifier: GPL-2.0-or-later
+
+# shellcheck disable=SC1091
+#set -x
+declare  exit
+source "$DEV_APP_DIR"/utils/setExit
+declare -g suite
+source "$DEV_APP_DIR"/utils/getSuite "$1"
+declare -g gitReference
+source "$DEV_APP_DIR"/utils/getGitReference "$2"
+
+declare projectDir
+projectDir="$DEV_SUITES_DIR"/"$suite"/project
+
+codeWorkspacePath="$DEV_SUITES_DIR"/"$suite"/edits/"$suite"."$gitReference".code-workspace
+declare -a cwdDirs=( $(grep "$gitReference" "$codeWorkspacePath" | sed -e 's/^[ ]*[{][ ]*"path"[:][ ]*//g' -e 's/[}][ ]*[}]*[,]//g' ))
+
+for cwdDir in ${cwdDirs[0]}; do
+  cwdDir=${cwdDir//\"/}
+  if [[ -e "$cwdDir" ]]; then break; fi
+  cd "$cwdDir" || :
+done
+
+if [[ ! -e "$cwdDir" ]]; then
+echo "Could not find the corresponding worktree for $codeWorkspacePath";
+$exit 1;
+fi
+if [[ -e "$codeWorkspacePath" ]]; then
+  cd "$cwdDir" || :
+  code "$codeWorkspacePath"
+else
+    echo "Could not find code-code workspace file for $gitReference"
+    echo "$codeWorkspacePath not found"
+    $exit 1;
+fi
+echo "$suite" >"$DEV_SUITES_DIR"/currentSuite
+
+projectDir="$DEV_SUITES_DIR"/"$suite"/project
+echo "$gitReference" >"$projectDir"/currentGitReference
+echo "$codeWorkspacePath" >"$projectDir"/currentCodeWorkspacePath
+cd "$cwdDir" || $exit 1

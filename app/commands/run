@@ -1,0 +1,29 @@
+#!/bin/bash
+#  SPDX-FileName: dev0/app/run
+#  SPDX-FileComment:User by run and build commands
+#  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
+#  SPDX-License-Identifier: GPL-2.0-or-later
+declare  exit
+source "$DEV_APP_DIR"/utils/setExit
+declare -g suite
+source "$DEV_APP_DIR"/utils/getSuite "$1"
+declare -g gitReference
+source "$DEV_APP_DIR"/utils/getGitReference "$2"
+
+projectDir="$DEV_SUITES_DIR"/"$suite"/project
+if [[ ! -d "$projectDir" ]]; then
+  echo Could not find "$projectDir directory" ; $exit 1
+fi
+projectRunScript=$projectDir/run
+if [[ ! -f "$projectRunScript" ]]; then
+  echo Could not find "$projectRunScript script" ; $exit 1
+fi
+
+export gitReference
+export suite
+echo $projectRunScript "$@"
+# shellcheck disable=SC2086
+# shellcheck disable=SC1090
+$projectRunScript "$@"
+
+

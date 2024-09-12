@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-#  SPDX-FileName: bashScript
+#  SPDX-FileName: test_matchSuites.bats
 #  SPDX-FileComment: Template bash script
 #  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
 #  SPDX-License-Identifier: GPL-2.0-or-later

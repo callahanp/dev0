@@ -1,0 +1,41 @@
+#!/bin/bash
+pwdAtStart=$(pwd)
+cd ../testing || { echo "Please cd to the dev0 testing directory"; exit 1; }
+testingHome=$(pwd)
+testDataHome=$(realpath ../test_data)
+rm -rf -I "${testDataHome:?}"/*
+mkdir ../test_data/tiny.git
+cd ../test_data/tiny.git || { echo "Unable to cd to ../test_data/tinygit. ";
+                            echo "That's a bit wierd considering we just created it." ; exit 1; }
+
+git init --initial-branch=next    #  Create a /path/to/my/codebase/.git directory.
+touch README.md  # this is the only existing file...
+git add .   #  add all existing files to the index.
+git commit   # Record the pristine state as the first commit in the history
+
+cd $testingHome >/dev/null || { echo "Forgot where we were already?"; exit 1; }
+
+for suite in  wwww wxyz yyyy; do
+
+    mkdir -p  "${testDataHome}"/"${suite}"/repositories
+    mkdir -p  "${testDataHome}"/"${suite}"/worktrees
+    mkdir -p  "${testDataHome}"/"${suite}"/project
+    mkdir -p  "${testDataHome}"/"${suite}"/edit
+    cd "${testDataHome}"/"${suite}"/repositories ||{ echo "Cant Find ${testDataHome} /wwww/repositories???" exit 1;}
+    git clone --bare  "${testDataHome}"/tiny.git "${suite}".git
+    cd "${suite}".git || { echo "Cant Find ${testDataHome} /wwww/repositories/"$suite".git"; exit 1;}
+    git worktree add -B next "${testDataHome}"/"${suite}"/worktrees/${suite}.next
+cat >"${testDataHome}"/"${suite}"/edit/"${suite}".next.code-workspace <<EOD
+  {
+    "folders": [
+      { "path": "../project"},
+      { "path": "../edits"},
+      { "path": "../worktrees/"${suite}".next"},
+      {"path": "./.vscode"}
+    ]
+  }
+EOD
+done
+cd  "${testDataHome}"/yyyy/repositories/yyyy.git ||  { echo "${testDataHome}/yyyy/repositories/yyyy.git"; exit 1; }
+ git worktree add -B tickets/1234 "${testDataHome}"/"wxyz"/worktrees/yyyy.tickets.1234
+

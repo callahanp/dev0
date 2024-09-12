@@ -1,0 +1,16 @@
+#!/bin/bash
+#  SPDX-FileName: getGitReference
+#  SPDX-FileComment:User by all commands
+#  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
+#  SPDX-License-Identifier: GPL-2.0-or-later
+
+declare -g gitReference
+declare -g suite
+declare -g exit
+
+gitReference="$1"
+if [[ "$gitReference" == "" ]]; then
+  gitReference="$(<"$DEV_SUITES_DIR"/"$suite"/project/currentGitReference)";
+  if [[ "$gitReference" == "" ]]; then  echo "Could not find a value for most recent git reference"; $exit 1; fi
+  if [[ "$gitReference" == "" ]]; then  echo "Please specify a git reference with a code workspaCdefined"; $exit 1; fi
+fi

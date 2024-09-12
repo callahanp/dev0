@@ -1,0 +1,12 @@
+#!/bin/bash
+#  SPDX-FileName: getSuite
+#  SPDX-FileComment:User by run and build commands
+#  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
+#  SPDX-License-Identifier: GPL-2.0-or-later
+
+
+suite=$1
+
+if [[ "$suite" == "" ]]; then suite="$(<"$DEV_SUITES_DIR"/currentSuite)"; fi
+if [[ "$suite" == "" ]]; then  echo "Could not find a value for most recent Suite Name"; $exit 1; fi
+if [[ ! -e $DEV_SUITES_DIR/"$suite" ]]; then  echo "Could not find  Suite: $suite"; $exit 1; fi

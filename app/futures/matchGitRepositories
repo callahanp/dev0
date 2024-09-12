@@ -1,4 +1,8 @@
 #!/bin/bash
+#  SPDX-FileName: dev0/app/run
+#  SPDX-FileComment:User by run and build commands
+#  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
+#  SPDX-License-Identifier: GPL-2.0-or-later
 # source $DEV_APP_DIR/Repositories [suite-name-filter]
 # source $DEV_APP_DIR/Repositories suite-name-filter [repository-name-filter]
 #set -x
@@ -51,16 +55,16 @@ for sp in "${_suitePaths[@]}"; do
     if [ "$reposInWorkspaces"  ]; then echo "unimplemented feature select repos from "; fi
     if [ "$repos" ]; then
     sp=${sp%/}
-    for reposDir in "$sp"/repositories; do
-        reposDir=${reposDir%/}
-        #echo $reposDir
-        if [[ "$2" != "" && -e $reposDir/"$2" ]]; then
-          _repositoryPaths+=( "$reposDir"/"$2" )
+    for _cloneDir in "$sp"/repositories/*; do
+        _cloneDir=${_cloneDir%/}
+        #echo $_cloneDir
+        if [[ "$2" != "" && -e "$_cloneDir"/"$2" ]]; then
+          _repositoryPaths+=( "$_cloneDir"/"$2" )
         else
           if [[ "$2" == "" ]]; then
-               _repositoryPaths+=( "$reposDir"/*/ )
+               _repositoryPaths+=( "$_cloneDir"/*/ )
           else
-              _repositoryPaths+=( "$reposDir"/*"$2"*/ )
+              _repositoryPaths+=( "$_cloneDir"/*"$2"*/ )
           fi
         fi
     done
@@ -68,7 +72,7 @@ for sp in "${_suitePaths[@]}"; do
 done
 
 #mapfile -t -d ' ' _repositoryPaths < <( echo "$DEV_SUITES_DIR"/*"$1"*/repositories/*$2*.git; )
-for rp in ${_repositoryPaths[@]}; do
+for rp in "${_repositoryPaths[@]}"; do
     rp=${rp%/} # <--- -name will be empty if you do not do this
     if [ "$name" ]; then
       GitRepositories+=("${rp##*/}") # name only
@@ -76,7 +80,7 @@ for rp in ${_repositoryPaths[@]}; do
       GitRepositories+=("${rp}") # path
     fi
 done
- readarray -t -d '' GitRepositories < <(printf '%s\0' "${GitRepositories[@]}" | sort -z);
+readarray -t -d '' GitRepositories < <(printf '%s\0' "${GitRepositories[@]}" | sort -z);
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   for r in "${GitRepositories[@]}"; do echo "$r"; done;
 fi

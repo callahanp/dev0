@@ -11,6 +11,18 @@
         "env": {
                 "DEV_SUITES_DIR": "../test_data"
             }
+    },
+    {
+        "type": "bashdb",
+        "request": "launch",
+        "name": "debug matchGitWorktrees",
+        "cwd": "",
+        "program": "${file}",
+        "args": [  "*", "yyyy" ],
+        "terminalKind": "integrated",
+        "env": {
+                "DEV_SUITES_DIR": "../test_data"
+            }
     }, {
         "type": "bashdb",
         "request": "launch",
@@ -77,18 +89,6 @@
         "cwd": "",
         "program": "${file}",
         "args": [ "-n" ],
-        "terminalKind": "integrated",
-        "env": {
-                "DEV_SUITES_DIR": "/work/suites"
-            }
-    },
-    {
-        "type": "bashdb",
-        "request": "launch",
-        "name": "debug matchGitWorktrees",
-        "cwd": "",
-        "program": "${file}",
-        "args": [ "-p" ],
         "terminalKind": "integrated",
         "env": {
                 "DEV_SUITES_DIR": "/work/suites"

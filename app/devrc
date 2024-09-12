@@ -1,0 +1,88 @@
+#!/bin/bash
+#set -x
+restore_dir=$(pwd)
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+while [ -L "${SCRIPT_PATH}" ]; do
+  SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" >/dev/null 2>&1 && pwd)"
+  SCRIPT_PATH="$(readlink "$SCRIPT_PATH")"
+  [[ ${SCRIPT_PATH} != /* ]] && SCRIPT_PATH="${SCRIPT_DIR}/${SCRIPT_PATH}"
+done
+SCRIPT_PATH="$(readlink -f "$SCRIPT_PATH")"
+SCRIPT_DIR="$(cd -P "$(dirname -- "$SCRIPT_PATH")" >/dev/null 2>&1 && pwd)"
+# SCRIPT_DIR is guaranteed to be the directory where this script lives
+# no matter where you call it from, or how you got to it.
+cd "$SCRIPT_DIR" || return 1
+# This should leave us at the top level of dev1 - No matter what.
+
+echo "starting dev1rc"
+export DEV1=$(pwd)
+if [[ "$DEV1_SUITES_PATH" == "" ]]; then
+    echo "Unable to find DEV1 suites.  "
+    echo "Please define and export DEV1_SUITES_PATH in your ~/.bashrc"
+    echo " or place DEV1 in a directory named suites"
+    return
+fi
+export DEV1_COMMANDS_PATH=$DEV1/commands
+export DEV1_TEMPLATES_PATH=$DEV1/templates
+cd "${DEV1}"  || return 1
+# shellcheck enable=require-variable-braces
+# shellcheck disable=2142
+# shellcheck disable=2139
+alias suites="cd $(pwd)/..; ls ./"
+# shellcheck disable=2142
+
+#TODO: use bash functions for these instead of aliases
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
+alias new="f(){ source $(pwd)/commands/new \$@; unset -f f; }; f"
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
+alias context="f(){ source $(pwd)/commands/context \$@; unset -f f; }; f"
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
+alias project="f(){ source $(pwd)/commands/project \$@; unset -f f; }; f"
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
+alias ide="f(){ source $(pwd)/commands/ide \$@; unset -f f; }; f"
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
+alias build="f(){ source $(pwd)/commands/build \$@; unset -f f; }; f"
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
+alias run="f(){ source $(pwd)/commands/run \$@;unset -f f; }; f"
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
+alias debug="f(){ source $(pwd)/commands/run \$@ debug ; unset -f f; }; f"
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
+alias suite="f(){ source $(pwd)/commands/suite \$@; unset -f f; }; f"
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
+alias status="f(){ source $(pwd)/commands/status \$@; unset -f f; }; f"
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
+alias maint="f(){ source $(pwd)/commands/maint \$@; unset -f f; }; f"
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
+alias dev1rc="source $(pwd)/dev1rc"
+
+function copy_alias(){
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
+# shellcheck disable=SC2086
+alias $2="$(alias $1 |sed -e s/.*=// -e s/\'//g )"
+
+}
+copy_alias new n
+copy_alias context c
+copy_alias suite s
+copy_alias ide i
+copy_alias build b
+copy_alias run r
+copy_alias debug g
+
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
+alias suites="cd ${DEV1_SUITES_PATH} || return 1; ls -1"
+
+cd "$restore_dir" || return 1
