@@ -1,0 +1,166 @@
+#!/bin/bash
+#  SPDX-FileName: getCMakeBuildType
+#  SPDX-FileComment:User by run and build commands
+#  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
+#  SPDX-License-Identifier: GPL-2.0-or-later
+# maint:
+# archive|add s|suite
+# add r|repo|repository suite-name giturl|local-repository branch... builds
+# add w|tree|worktree   suite-name repo-name | repo-name.git branch...
+# add b|build
+# add code-workspace
+unset parameters
+unset gitBranches
+unset branchList
+unset gitTags
+unset tagList
+unset gitWorktrees
+unset worktreeList
+unset gitWorktreeInstances
+declare -A parameters
+declare -A gitBranches
+declare -A worktreeBranches
+declare -a branchList
+declare -A gitTags
+declare -a tagList=()
+declare -A gitWorktrees
+declare -a worktreeList=()
+declare -A gitWorktreeInstances
+  for repo in $DEV_SUITES_DIR/*/repositories/*.git; do
+    cd $repo
+    mapfile -t branchList < <(git branch)
+    for branch in "${branchList[@]}"; do
+      gitBranches["$branch"]+=" $repo "
+    done
+    mapfile -t tagList < <(git tag)
+    for tag in "${tagList[@]}"; do
+      gitTags["$tag"]+=" $repo "
+    done
+    mapfile -t worktreeList < <(git worktree list|grep -v "(bare)")
+    for worktree in "${worktreeList[@]}"; do
+      gitreference=${worktree#*[}
+      gitreference=${gitreference%]*}
+      gitWorktrees["$gitreference"]+=" $worktree $repo "
+    done
+  done
+  for worktree in  $DEV_SUITES_DIR/*/worktrees/*; do
+    cd $worktree
+    echo worktree:$worktree
+    echo gitReference: $gitReference
+    repo=$(git rev-parse --path-format=absolute --git-common-dir)
+    worktreeDirName=$(basename $worktree)
+    worktreeGitReferences[${gitReference}]+="$suite $repo $worktree;"
+  done
+# echo "--------------Branches ----------------------"
+    # for i in "${!gitBranches[@]}"; do
+    #   echo " $i ${gitBranches[$i]}"
+    # done
+         echo "--------------Git Worktrees ----------------------"
+        for i in "${!gitWorktrees[@]}"; do
+      echo " $i ${gitWorktrees[$i]}"
+    done
+    echo "--------------Git Worktree Instances ----------------------"
+
+    for i in "${!gitWorktreeInstances[@]}"; do
+      echo " $i ${gitWorktreeInstances[$i]}"
+    done
+        echo ${#gitWorktreeInstances}
+        exit
+#declare -p gitBranches
+#declare -p gitTags
+exit
+parameters["archive"]="false"
+parameters["add"]="false"
+parameters["target"]=""
+parameters["suite-name"]=""
+parameters["git-url"]=""
+parameters["git-reference"]=""
+parameters["repo-name"]=""
+parameters["code-workspace"]=""
+parameters["upstream-url"]=""
+
+function identifyAsSuiteName(){
+  echo "identifyAsSuiteName $1"
+  if [[ -e "$DEV_SUITES_DIR"/$1 ]]; then return 0
+  else return 1
+  fi
+}
+function identifyAsGitReference(){
+  echo "identifyAsGitReference"
+
+
+}
+function identifyAsUserFork(){
+  echo "identifyAsUserFork stub"
+}
+function identifyAsLocalRepository(){
+  echo "identifyAsLocalRepository stub"
+}
+function identifyAsBareClone(){
+  echo "identifyAsBareClone stub"
+}
+function identifyAsGitWorktree(){
+  echo "identifyAsGitWorktree stub"
+}
+function identifyAsCodeWorkspace(){
+  echo "identifyAsCodeWorkspace stub"
+}
+
+
+
+for arg in "$@"; do
+  echo "$arg"
+  case $arg in
+  archive)
+    parameters["archive"]="true"
+    ;;
+  add)
+    parameters["add"]="true"    ;;
+  s|suite)
+    parameters["suite"]="$arg"    ;;
+  r|repo|repository)
+    parameters["repository"]="$arg"    ;;
+  w|tree|worktree)
+    parameters["repository"]="$arg"    ;;
+  b|build)
+    parameters["build"]="$arg"    ;;
+  debug)
+    debug=""
+    ;;
+   default) ;;
+  esac
+  if identifyAsSuiteName "$arg"; then
+      echo "$arg is a Suite" $debug;
+      parameters["suite"]=$arg
+  fi
+  if identifyAsGitReference    "$arg"; then
+      echo "$arg is a GitReference";
+      parameters["git-reference"]=$arg
+  fi
+  if identifyAsGitURL          "$arg"; then
+      echo "$arg is a Git Url";
+      parameters["git-url"]=$arg
+  fi
+  if identifyAsUserFork        "$arg"; then
+      echo "$arg is a User Fork";
+      parameters["user-fork"]=$arg
+  fi
+  if identifyAsLocalRepository "$arg"; then
+      echo "$arg is a Suite";
+      parameters["local-repository"]=$arg
+  fi
+  if identifyAsBareClone       "$arg"; then
+      echo "$arg is a BareClone";
+      parameters["bare-clone"]=$arg
+  fi
+  if identifyAsGitWorktree     "$arg"; then
+      echo "$arg is a GitWorktree ";
+      parameters["git-worktree "]=$arg
+  fi
+  if identifyAsCodeWorkspace   "$arg"; then
+      echo "$arg is a Code-Workspace";
+      parameters["code-workspace"]=$arg
+  fi
+done
+# add r|repo|repository suite-name giturl|local-repository branch... builds
+# add w|tree|worktree   suite-name repo-name | repo-name.git branch...
