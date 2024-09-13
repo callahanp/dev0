@@ -14,32 +14,19 @@ declare -g gitReference
 source "$DEV_APP_DIR"/utils/getGitReference "$2"
 
 declare projectDir
-projectDir="$DEV_SUITES_DIR"/"$suite"/project
-
-codeWorkspacePath="$DEV_SUITES_DIR"/"$suite"/edits/"$suite"."$gitReference".code-workspace
-declare -a cwdDirs=( $(grep "$gitReference" "$codeWorkspacePath" | sed -e 's/^[ ]*[{][ ]*"path"[:][ ]*//g' -e 's/[}][ ]*[}]*[,]//g' ))
-
-for cwdDir in ${cwdDirs[0]}; do
-  cwdDir=${cwdDir//\"/}
-  if [[ -e "$cwdDir" ]]; then break; fi
-  cd "$cwdDir" || :
-done
-
-if [[ ! -e "$cwdDir" ]]; then
-echo "Could not find the corresponding worktree for $codeWorkspacePath";
-$exit 1;
+declare editsDir
+declare -a codeWorkspacePaths
+shopt -s nullglob
+#projectDir="$DEV_SUITES_DIR"/"$suite"/project
+editsDir="$DEV_SUITES_DIR"/"$suite"/edits
+codeWorkspacePaths=("$DEV_SUITES_DIR"/"$suite"/edits/"$suite".*"$gitReference"*.code-workspace)
+echo "${#codeWorkspacePaths[@]}"
+echo "${codeWorkspacePaths[@]}"
+if [[ ${#codeWorkspacePaths[@]} -eq 1 && -e $editsDir && -e  ${codeWorkspacePaths[0]} ]]; then
+  cd "$editsDir" ||{ echo "can''t find $editsDir"; return;}
+  code "${codeWorkspacePaths[0]}"
+elif [[ ${#codeWorkspacePaths[@]} -gt 1   && -e $editsDir ]]; then
+        echo  "  ${codeWorkspacePaths[*]}"
+        echo "be more specific than $gitReference"
+        return 1
 fi
-if [[ -e "$codeWorkspacePath" ]]; then
-  cd "$cwdDir" || :
-  code "$codeWorkspacePath"
-else
-    echo "Could not find code-code workspace file for $gitReference"
-    echo "$codeWorkspacePath not found"
-    $exit 1;
-fi
-echo "$suite" >"$DEV_SUITES_DIR"/currentSuite
-
-projectDir="$DEV_SUITES_DIR"/"$suite"/project
-echo "$gitReference" >"$projectDir"/currentGitReference
-echo "$codeWorkspacePath" >"$projectDir"/currentCodeWorkspacePath
-cd "$cwdDir" || $exit 1
