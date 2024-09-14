@@ -3,8 +3,13 @@
 #  SPDX-FileComment:User by run and build commands
 #  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
 #  SPDX-License-Identifier: GPL-2.0-or-later
-declare  exit
-source "$DEV_APP_DIR"/utils/setExit
+declare exit
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  exit="exit"
+else
+  exit="return"
+fi
+if [[ "$1" == "-x" ]]; then { set -x; shift; } fi
 declare -g suite
 # shellcheck disable=SC1091
 source "$DEV_APP_DIR"/utils/getSuite "$@"
@@ -13,15 +18,14 @@ source "$DEV_APP_DIR"/utils/getSuite "$@"
 declare -g gitReference
 source "$DEV_APP_DIR"/utils/getGitReference "$2"
 
-
 projectDir="$DEV_SUITES_DIR"/"$suite"/project
 
 if [[ ! -e "$projectDir" ]]; then
-  echo Could not find "$projectDir directory" ; $exit 1
+  echo Could not find "$projectDir directory" ;  $exit 1
 fi
 projectBuildScript=$projectDir/build
 if [[ ! -e "$projectBuildScript" ]]; then
-  echo Could not find "$projectBuildScript script" ;$exit 1
+  echo Could not find "$projectBuildScript script" ; $exit 1;
 fi
 
 source $projectBuildScript "$@"
