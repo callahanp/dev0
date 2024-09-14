@@ -6,11 +6,57 @@
 
 declare -g gitReference
 declare -g suite
+
+declare -a _gitReferences
+declare  _gitReference
+declare -A _uniqueGitReferences
+
+declare  exit
+# shellcheck disable=SC1091
 declare -g exit
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  exit="exit"
+else
+  exit="return"
+fi
 
 gitReference="$1"
-if [[ "$gitReference" == "" ]]; then
-  gitReference="$(<"$DEV_SUITES_DIR"/"$suite"/project/currentGitReference)";
+if [[ "$suite" != "" && "$gitReference" == "" ]]; then
+  _gitReferences=( echo "$DEV_SUITES_DIR"/"$suite"/project/currentGitReference )
   if [[ "$gitReference" == "" ]]; then  echo "Could not find a value for most recent git reference"; $exit 1; fi
-  if [[ "$gitReference" == "" ]]; then  echo "Please specify a git reference with a code workspaCdefined"; $exit 1; fi
+  if [[ "$gitReference" == "" ]]; then  echo "Please specify a git reference with a git worktree"; $exit 1; fi
+elif [[ "$suite" == "" ]]; then
+    _gitReferences=( "$DEV_SUITES_DIR"/*/worktrees/*$1* )
+else
+    _gitReferences=( "$DEV_SUITES_DIR"/"$suite"/worktrees/*"$1"* )
 fi
+
+
+if [ ${#_gitReferences[@]} -gt 0 ]; then
+  for _gitReference in ${_gitReferences[@]}; do
+      _gitReference=${_gitReference#*.}
+       echo "$_gitReference"
+      _uniqueGitReferences["${_gitReference}"]="$_gitReference"
+  done
+fi
+declare -p _gitReferences
+declare -p _uniqueGitReferences
+if [ ${#_gitReferences[@]} -eq 0 ]; then
+  echo "Error: Could not find a worktree matching $1"
+else
+  if [ ${#_gitReferences[@]} -eq 1 ]; then
+    for key in ${!_uniqueGitReferences[@]}; do
+    gitReference=${_uniqueGitReferences[$key]}
+    $exit
+  done
+  else
+    echo "Error: Could not match just one git reference with $1."
+    echo "Please specify a match to one of the following:"
+    for key in ${!_uniqueGitReferences[@]}; do
+      echo "     ${_uniqueGitReferences[$key]}"
+      gitReference=$key
+
+    done
+  fi
+fi
+echo $gitReference
