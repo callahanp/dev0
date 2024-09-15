@@ -5,8 +5,10 @@
 #  SPDX-License-Identifier: GPL-2.0-or-later
 
 
-suite=$1
+if [[ "$1" == "" ]]; then
+  suite="$(<"$DEV_SUITES_DIR"/currentSuite)";
+  if [[ "$suite" == "" ]]; then  echo "Could not find a value for most recent Suite Name"; $exit 1; fi
+elif [[ -e $DEV_SUITES_DIR/"$1" ]]; then
+  suite=$1
+fi
 
-if [[ "$suite" == "" ]]; then suite="$(<"$DEV_SUITES_DIR"/currentSuite)"; fi
-if [[ "$suite" == "" ]]; then  echo "Could not find a value for most recent Suite Name"; $exit 1; fi
-if [[ ! -e $DEV_SUITES_DIR/"$suite" ]]; then  echo "Could not find  Suite: $suite"; $exit 1; fi

@@ -20,22 +20,26 @@ else
   exit="return"
 fi
 
-gitReference="$1"
-if [[ "$suite" != "" && "$gitReference" == "" ]]; then
-  _gitReferences=( echo "$DEV_SUITES_DIR"/"$suite"/project/currentGitReference )
-  if [[ "$gitReference" == "" ]]; then  echo "Could not find a value for most recent git reference"; $exit 1; fi
-  if [[ "$gitReference" == "" ]]; then  echo "Please specify a git reference with a git worktree"; $exit 1; fi
-elif [[ "$suite" == "" ]]; then
-    _gitReferences=( "$DEV_SUITES_DIR"/*/worktrees/*$1* )
+source "$DEV_APP_DIR"/utils/getSuite "$1"
+if [[ "$suite" != "" && "$suite" == "$1" ]]; then $exit 0; fi
+if [[ "$1" == "" ]]; then
+  _gitReference=$( <"$DEV_SUITES_DIR"/"$suite"/project/prevGitReference )
+  if [[ "$_gitReference" == "" ]]; then
+    echo "Could not find a value for most recent git reference";
+    echo "Please specify a git reference with a git worktree";
+    $exit 1;
+  fi
+  gitReference=$_gitReference
+  $exit 0
+fi
+if [[ "$suite" == "" ]]; then
+    _gitReferences=( "$DEV_SUITES_DIR"/*/worktrees/*"$1"* )
 else
     _gitReferences=( "$DEV_SUITES_DIR"/"$suite"/worktrees/*"$1"* )
 fi
-
-
 if [ ${#_gitReferences[@]} -gt 0 ]; then
-  for _gitReference in ${_gitReferences[@]}; do
+  for _gitReference in "${_gitReferences[@]}"; do
       _gitReference=${_gitReference#*.}
-       echo "$_gitReference"
       _uniqueGitReferences["${_gitReference}"]="$_gitReference"
   done
 fi
@@ -45,18 +49,15 @@ if [ ${#_gitReferences[@]} -eq 0 ]; then
   echo "Error: Could not find a worktree matching $1"
 else
   if [ ${#_gitReferences[@]} -eq 1 ]; then
-    for key in ${!_uniqueGitReferences[@]}; do
-    gitReference=${_uniqueGitReferences[$key]}
-    $exit
-  done
+    for key in "${!_uniqueGitReferences[@]}"; do
+      gitReference=${_uniqueGitReferences[$key]}
+    $exit 0
+    done
   else
     echo "Error: Could not match just one git reference with $1."
     echo "Please specify a match to one of the following:"
-    for key in ${!_uniqueGitReferences[@]}; do
+    for key in "${!_uniqueGitReferences[@]}"; do
       echo "     ${_uniqueGitReferences[$key]}"
-      gitReference=$key
-
     done
   fi
 fi
-echo $gitReference
