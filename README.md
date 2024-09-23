@@ -1,10 +1,22 @@
 # DEV0 - A simple development environment
 
-# The workflow supported by DEV0 is simple:
+Dev0 provides a common structure and workflow for the most common developer tasks when creating or maintaining applications.
 
-- edit
-- build
-- run
+Dev0 supports
+- Standalone Applications with a single cloned repository
+- Application Suites with multiple components
+- Clones of multiple application, library, and toolchain repositories
+- Official repositories and personal forks of multiple individuals
+- 
+# The workflow supported by DEV0 is simple:
+- setup Application or Application Suite
+- setup individual working environments for specific tasks related to releases, maintenance, refactoring, bug fixing
+- edit & run under debug in VSCode
+- scripted build using any build technology, including the Gnu Toolchain, CMake, and Ninja Build.
+- scripted run of executables
+
+While it is possible to demonstrate building and running CMake and Gnu Toolchain projects within VScode, Dev0 does not directly support this in the current version.
+
 
 ## DEV0 Commands
 
@@ -64,7 +76,7 @@ elements
 
 ## DEV0 Directories
 
-To make things regular between projects, DEV0 enforces a set of directory names for common
+To make things regular between projects, DEV0 enforces a set of directory names for common development artifacts: repositories, worktrees, builds etc.
 
 ### directory: $DEV_SUITES_DIR/suite-name
 
