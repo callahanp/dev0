@@ -60,31 +60,32 @@ The basic procedure is:
 
 Legend: 
 
-repo-name: two-part name  owner-component: eg, callahanp-simgear (a fork of flightgear-simgear)
-repo-folder: repo-name.git
-git-reference-id: git reference with "/" translated to "." 
-build-id:  git-reference-id.cmake-build-type
-worktree-id: repo-name.git-reference-id in other words owner-component.git-reference
-code-workspace-id: git-reference-id | suite-name.git-reference-id |anything-else
-code-workspace: code-workspace-id.code-workspace
-workspace: code-workspace
-worktree-symlink-name: component (part of repo-name)|something else needed by your build and run scripts
+- repo-name: two-part name  owner-component: eg, callahanp-simgear (a fork of flightgear-simgear)
+- repo-folder: repo-name.git
+- git-reference-id: git reference with "/" translated to "." 
+- build-id:  git-reference-id.cmake-build-type
+- worktree-id: repo-name.git-reference-id in other words owner-component.git-reference
+- code-workspace-id: git-reference-id | suite-name.git-reference-id |anything-else
+- code-workspace: code-workspace-id.code-workspace
+- workspace: code-workspace
+- worktree-symlink-name: component (part of repo-name)|something else needed by your build and run scripts
 
 Forms:
-   dev0 add suite suite-name
-   dev0 add repository git-url (upstream-git-URL) local-git-repo-name
-   dev0 add worktree local-repo-name git-reference
-   dev0 add build build-id (worktree-symlink-name) 
-   dev0 add build build-id worktree-id (worktree-symlink-name)
-   dev0 add VsCode-workspace code-workspace-id worktree-id \[ worktree-id\]...
-   dev0 remove suite fg
-   dev0 remove repository local-git-repo-name
-   dev0 remove worktree local-repo-name.git-reference
-   dev0 remove build build-id \[worktree-symlink-name\]
-   dev0 remove build build-id \[worktree-id\] | \[worktree-symlink-name\]
-   dev0 remove VsCode-workspace code-workspace-id  \[ worktree-id\]...
-   dev0 git-pull worktree-id
-   dev0 git-rebase target-worktree-id 
+
+    dev0 add suite suite-name
+    dev0 add repository git-url (upstream-git-URL) local-git-repo-name
+    dev0 add worktree local-repo-name git-reference
+    dev0 add build build-id (worktree-symlink-name) 
+    dev0 add build build-id worktree-id (worktree-symlink-name)
+    dev0 add VsCode-workspace code-workspace-id worktree-id \[ worktree-id\]...
+    dev0 remove suite fg
+    dev0 remove repository local-git-repo-name
+    dev0 remove worktree local-repo-name.git-reference
+    dev0 remove build build-id \[worktree-symlink-name\]
+    dev0 remove build build-id \[worktree-id\] | \[worktree-symlink-name\]
+    dev0 remove VsCode-workspace code-workspace-id  \[ worktree-id\]...
+    dev0 git-pull worktree-id
+    dev0 git-rebase target-worktree-id 
 
 
 ## DEV0/Native Commands
