@@ -2,7 +2,7 @@
 
 ## Overview
 
-Dev0 provides a common structure and workflow for the most common developer tasks when creating or maintaining applications. Its purpose is to manage build scenarios seamlessly so a developer can instantly switch to a different build scenario. Dev0 does not provide a complete development environment.  Its purpose is to provide an interface to developers' daily tasks using scripts you probably already have.
+Dev0 provides a common structure and workflow for the most common developer tasks when creating or maintaining applications. Its purpose is to manage build scenarios seamlessly so a developer can instantly switch to a different one. Dev0 does not provide a complete development environment.  Its purpose is to provide an interface to developers' daily tasks using scripts you probably already have or can easily write
 
 Dev0 supports
 - Multiple Standalone Applications with a single cloned repository
@@ -74,7 +74,7 @@ Forms:
 
     dev0 add suite suite-name
     dev0 add repository git-url (upstream-git-URL) local-git-repo-name
-    dev0 add worktree local-repo-name git-reference
+    dev0 add worktree local-repo-name new-branch| detach git-reference pull|rebase 
     dev0 add build build-id (worktree-symlink-name) 
     dev0 add build build-id worktree-id (worktree-symlink-name)
     dev0 add VsCode-workspace code-workspace-id worktree-id \[ worktree-id\]...
@@ -84,8 +84,7 @@ Forms:
     dev0 remove build build-id \[worktree-symlink-name\]
     dev0 remove build build-id \[worktree-id\] | \[worktree-symlink-name\]
     dev0 remove VsCode-workspace code-workspace-id  \[ worktree-id\]...
-    dev0 git-pull worktree-id
-    dev0 git-rebase target-worktree-id 
+    dev0 update worktree-id 
 
 
 ## DEV0/Native Commands
