@@ -14,8 +14,10 @@ else
   exit="return"
 fi
 declare -g suite
+echo source "$DEV_APP_DIR"/utils/getSuite "$1"
 source "$DEV_APP_DIR"/utils/getSuite "$1"
 declare -g gitReference
+echo source "$DEV_APP_DIR"/utils/getGitReference "$2"
 source "$DEV_APP_DIR"/utils/getGitReference "$2"
 
 declare projectDir

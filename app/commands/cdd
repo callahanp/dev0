@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# usage:
+# cd w|worktrees - change directory to $DEV0_SUITES_DIR/suite-name/worktrees
+# cd r|repositories - change directory to $DEV0_SUITES_DIR/suite-name/repositories
+# cd b|builds  - - change directory to $DEV0_SUITES_DIR/suite-name/builds
+# cd p|project - - change directory to $DEV0_SUITES_DIR/suite-name/project
+
+# change directory to one of the current workspace worktrees identified by number
+# cd w [0-n]
+# change directory to a worktree identified in the current build with a symlink.
+# cd w current-build-directory-symlink-name
+# cd build-worktree-symlink-name
+echo "cdd $*"
+pwdFragment="${PWD##"$DEV_SUITES_DIR"/}"
+if [[ "$pwdFragment" != "${PWD}"  &&  "$DEV_SUITES_DIR/${pwdFragment%%/*}" != "$DEV_SUITES_DIR" ]]; then
+  suiteDir=$DEV_SUITES_DIR/${pwdFragment%%/*}
+
+  case "$1" in
+    r|repositories)
+      cd "$suiteDir"/repositories  || return 1
+      ;;
+    w|worktrees)
+      cd "$suiteDir"/worktrees  || return 1
+      ;;
+    b|builds)
+      cd "$suiteDir"/builds  || { echo error; return 1;}
+      ;;
+    p|project)
+      cd "$suiteDir"/project  || return 1
+      ;;
+    *)
+      cd "$1" || return 1
+      ;;
+  esac
+  echo  "-- $(pwd) --"
+fi

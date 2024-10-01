@@ -34,6 +34,9 @@ alias suites="cd $(pwd)/..; ls ./"
 #TODO: use bash functions for these instead of aliases
 # shellcheck disable=SC2142
 # shellcheck disable=SC2139
+alias cdd="f(){ source $(pwd)/commands/cdd \$@; unset -f f; }; f"
+# shellcheck disable=SC2142
+# shellcheck disable=SC2139
 alias new="f(){ source $(pwd)/commands/new \$@; unset -f f; }; f"
 # shellcheck disable=SC2142
 # shellcheck disable=SC2139

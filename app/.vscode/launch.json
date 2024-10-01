@@ -120,10 +120,10 @@
     {
         "type": "bashdb",
         "request": "launch",
-        "name": "test suite",
-        "cwd": "",
+        "name": "test cd",
+        "cwd": "/work/suites",
         "program": "${file}",
-        "args": ["f" ],
+        "args": ["w" ],
         "terminalKind": "integrated",
         "env": {
                 "DEV_SUITES_DIR": "/work/suites"

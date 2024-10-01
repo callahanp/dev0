@@ -1,0 +1,45 @@
+/work/suites/fg/worktrees/flightgear-fgmeta.next/download_and_compile.sh SIMGEAR FGFS
+VERSION=8afa2c49cf7d4ad7e2b815524d3ef1721276947c
+SELECTED_SUITE=next
+APT_GET_UPDATE=n
+DOWNLOAD_PACKAGES=n
+IGNORE_INTERCOMPONENT_DEPS=y
+COMPILE=y
+RECONFIGURE=y
+DOWNLOAD=y
+JOPTION=-j24
+OOPTION=
+BUILD_SYSTEM_GENERATOR=Unix Makefiles
+BUILD_TYPE=Debug
+SG_CMAKEARGS=
+FG_CMAKEARGS=
+COMPOSITOR=
+DIRECTORY=/work/suites/dev0/worktrees/dev0.next/app
+
+!! You have selected the 'next' suite, which contains the development version
+   of FlightGear. The corresponding FlightGear code is very recent but may
+   well be unstable. Other possibilities are '--lts' for the 'LTS' suite (Long
+   Term Stable), '--old-lts' for the previous LTS suite and '-s' for the
+   latest release. '--lts' should provide the most stable setup. !!
+
+Note that options '-s', '--lts' and '--old-lts' apply in particular to the
+SIMGEAR, FGFS and DATA components, but other components may be affected as
+well. Use '--component-branch COMPONENT=BRANCH' (without the quotes) if you
+want to override the defaults (i.e., manually choose the branches for
+particular components).
+
+Branch used for each component:
+
+  COMPONENT_BRANCH[SIMGEAR]=next
+  COMPONENT_BRANCH[FGFS]=next
+
+******************************************************************************
+
+Note: option -p of download_and_compile.sh set to 'n' (no), therefore no
+      package will be installed via apt-get. Compilation of some components
+      may fail if mandatory dependencies are missing.
+
+****************************************
+**************** SIMGEAR ***************
+****************************************
+Fetching SIMGEAR with 'git clone https://git.code.sf.net/p/flightgear/simgear'
