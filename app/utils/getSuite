@@ -4,11 +4,15 @@
 #  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
 #  SPDX-License-Identifier: GPL-2.0-or-later
 
-
-if [[ "$1" == "" ]]; then
-  suite="$(<"$DEV_SUITES_DIR"/currentSuite)";
-  if [[ "$suite" == "" ]]; then  echo "Could not find a value for most recent Suite Name"; $exit 1; fi
+currentDir=$(pwd)
+suiteName=""
+if [[ "$1" == "" && "${currentDir##"$DEV_SUITES_DIR/"}" != "$currentDir" ]]; then
+  partialPath=${currentDir##"$DEV_SUITES_DIR/"}
+  suiteName=${partialPath%%/*}
+elif [[ "$1" == ""  && $suiteName == "" ]]; then
+  suiteName="$(<"$DEV_SUITES_DIR"/currentSuite)";
+  if [[ "$suiteName" == "" ]]; then  echo "Could not find a value for most recent Suite Name"; return 1; fi
 elif [[ -e $DEV_SUITES_DIR/"$1" ]]; then
-  suite=$1
+  suiteName=$1
 fi
 

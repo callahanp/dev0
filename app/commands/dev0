@@ -46,7 +46,10 @@ function addWorktree() {
   declare -p localGitRepositoryName
   declare -p gitBranch
   declare -p gitCommitIsh
-  worktreeDir="$worktreesDir"/"$localGitRepositoryName"."$gitReference"
+  if [ ! "$gitCommitIsh" ]; then
+    gitCommitIsh=$gitBranch
+  fi
+  worktreeDir="$worktreesDir"/"$localGitRepositoryName"."$gitBranch"
   cd "$repositoriesDir"/"$localGitRepositoryName".git || return 1
   pwd
   declare -p gitBranch
@@ -139,17 +142,18 @@ function addCodeWorkspace() { #code-workspace-id worktree-id...
 }
 function add () {
   echo "add $*"
+  echo "-$1-"
   case $1 in
     s|suite)
-    shift;
-    addSuite "$@";
+      shift;
+      addSuite "$@";
       ;;
     r|repository)
-    shift;
-    addRepository "$@";
+      shift;
+      addRepository "$@";
       ;;
-    w|worktreee)
-    shift;
+    w|worktree)
+      shift;
     addWorktree "$@";
       ;;
     b|build)
@@ -175,7 +179,7 @@ function delete () {
       shift;
       deleteRepository "$@";
       ;;
-    w|worktreee)
+    w|worktree)
       shift;
       deleteWorktree "$@";
       ;;
@@ -208,6 +212,12 @@ function rebase () {
   echo "rebase $*"
   return 0
 }
+source "$DEV_APP_DIR"/utils/getSuite ""
+if [ ! "$suiteName" ];  then
+  echo "unable to determine suite name"
+  return 1
+fi
+echo SuiteName: $suiteName
 
 repositoriesDir=$DEV_SUITES_DIR/$suiteName/repositories
 worktreesDir=$DEV_SUITES_DIR/$suiteName/worktrees
@@ -219,8 +229,7 @@ mkdir -p "$worktreesDir"
 mkdir -p "$projectDir"
 mkdir -p "$editsDir"
 mkdir -p "$buildsDir"
-
-case "$1" in
+case $1 in
   a|add)
     shift
     add "$@"
