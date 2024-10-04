@@ -1,0 +1,51 @@
+#!/bin/bash
+# upgrade
+# must be sourced
+# shellcheck source=getSuite
+declare -ga Repositories=()
+declare -ga Worktrees=()
+if [ ! "$suiteName" ] || [ "$1" ];then
+  # shellcheck source=getSuite
+  source "$DEV_APP_DIR"/utils/getSuite "$1"
+fi
+
+if [ ! "$suiteName" ]; then
+  echo "unable to determine suiteName"
+  return 1
+fi
+echo "Dev0:upgrade $suiteName"
+utils="$DEV_APP_DIR"/utils
+oldRepositoriesDir="$DEV_SUITES_DIR"/"$suiteName"/repositories
+newRepositoriesDir="$DEV_SUITES_DIR"/repositories
+oldWorktreesDir="$DEV_SUITES_DIR"/"$suiteName"/worktrees
+newWorktreesDir="$DEV_SUITES_DIR"/worktrees
+mkdir -p newWorktreesDir
+mkdir -p newRepositoriesDir
+
+if [[ -e "$oldRepositoriesDir" ]]; then
+  source "$utils"/getRepositories "$1"
+fi
+if [[ -e "$oldWorktreesDir" ]]; then
+  source "$utils"/getWorktrees "$1"
+
+fi
+declare -p Repositories
+declare -p Worktrees
+declare -a gitdir
+declare -a cmd
+
+for worktree in "${Worktrees[@]}"; do
+  mapfile -t gitdir < "$oldWorktreesDir"/"${worktree}"/.git
+  repodir=${gitdir#gitdir: }
+  repodir=${repodir%/worktrees/*}
+  echo "$repodir"
+  cd "$repodir" || return 1
+  cmd=(git worktree remove "$oldWorktreesDir/${worktree}")
+  echo "${cmd[@]}"
+  "${cmd[@]}"
+done
+for repository in "${Repositories[@]}"; do
+  cmd=(mv "$oldRepositoriesDir"/"$repository".git "$newRepositoriesDir"/)
+    echo "${cmd[@]}"
+  "${cmd[@]}"
+done
