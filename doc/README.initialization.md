@@ -1,5 +1,4 @@
-
-## Initialization
+# DEV0 Initialization
 
 Initialization commands start with "dev add".
 Dev writes the native commands it executes on the console.
@@ -15,7 +14,7 @@ A fully initialized suite includes
 - a configuration file specifying ide, code-editor, build and run configurations
 and the repositories and worktrees needed for editing, building and running.
 
-### .bashrc
+## .bashrc
 
 Example:
 
@@ -30,7 +29,7 @@ Example:
       echo "*******************************************"
     fi
 
-### Suite Directory
+## Suite Directory
 
 Dev0 needs a place to put Suite materials.
 A dedicated directory $DEV_SUITES_PATH is defined in your .bashrc
@@ -51,7 +50,7 @@ So far so good, but that's just an initial directory structure
 
 2 directories, 0 files
 
-### Repositories
+## Repositories
 
 Repositories for all suites are stored in $DEV_REPOSITORIES_PATH/
 
@@ -77,7 +76,7 @@ that is either
         └──suiteName
             └── project
 
-### Worktrees
+## Worktrees
 
 Worktrees for all suites are stored in $DEV_WORKTREES_PATH/
 
