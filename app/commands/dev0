@@ -30,13 +30,13 @@ doCommand () {
 }
 function addSuite() {
   suiteName="$1"
-  if [[ ! -e "$DEV_SUITES_DIR"/"$suiteName" ]]; then
-    mkdir -p "$DEV_SUITES_DIR"/"$suiteName"
-    echo "created suite in " "$DEV_SUITES_DIR"/"$suiteName"
+  if [[ ! -e "$DEV_SUITES_PATH"/"$suiteName" ]]; then
+    mkdir -p "$DEV_SUITES_PATH"/"$suiteName"
+    echo "created suite in " "$DEV_SUITES_PATH"/"$suiteName"
   else
-    echo "Existing Suite in " "$DEV_SUITES_DIR"/"$suiteName"
+    echo "Existing Suite in " "$DEV_SUITES_PATH"/"$suiteName"
   fi
-  cd "$DEV_SUITES_DIR"/"$suiteName" || echo in command dev0, unable to change directory to "$DEV_SUITES_DIR"/"$suiteName"
+  cd "$DEV_SUITES_PATH"/"$suiteName" || echo in command dev0, unable to change directory to "$DEV_SUITES_PATH"/"$suiteName"
   return 0
 }
 function addWorktree() {
@@ -212,22 +212,22 @@ function rebase () {
   echo "rebase $*"
   return 0
 }
-source "$DEV_APP_DIR"/utils/getSuite ""
+source "$DEV_UTILS_PATH"/suite/getSuite ""
 if [ ! "$suiteName" ];  then
   echo "unable to determine suite name"
   return 1
 fi
 echo SuiteName: $suiteName
 
-repositoriesDir=$DEV_SUITES_DIR/$suiteName/repositories
-worktreesDir=$DEV_SUITES_DIR/$suiteName/worktrees
-projectDir=$DEV_SUITES_DIR/$suiteName/project
-editsDir=$DEV_SUITES_DIR/$suiteName/edits
-buildsDir=$DEV_SUITES_DIR/$suiteName/builds
+repositoriesDir=$DEV_SUITES_PATH/repositories
+worktreesDir=$DEV_SUITES_PATH/worktrees
+projectPath=$DEV_SUITES_PATH/$suiteName/project
+editsPath=$DEV_SUITES_PATH/$suiteName/edits
+buildsDir=$DEV_SUITES_PATH/$suiteName/builds
 mkdir -p "$repositoriesDir"
 mkdir -p "$worktreesDir"
-mkdir -p "$projectDir"
-mkdir -p "$editsDir"
+mkdir -p "$projectPath"
+mkdir -p "$editsPath"
 mkdir -p "$buildsDir"
 case $1 in
   a|add)

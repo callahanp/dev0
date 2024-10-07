@@ -6,13 +6,16 @@
 
 currentDir=$(pwd)
 suiteName=""
-if [[ "$1" == "" && "${currentDir##"$DEV_SUITES_DIR/"}" != "$currentDir" ]]; then
-  partialPath=${currentDir##"$DEV_SUITES_DIR/"}
+if [[ "$1" == "" && "${currentDir##"$DEV_SUITES_PATH/"}" != "$currentDir" ]]; then
+  partialPath=${currentDir##"$DEV_SUITES_PATH/"}
   suiteName=${partialPath%%/*}
 elif [[ "$1" == ""  && $suiteName == "" ]]; then
-  suiteName="$(<"$DEV_SUITES_DIR"/currentSuite)";
+  suiteName="$(<"$DEV_SUITES_PATH"/currentSuite)";
   if [[ "$suiteName" == "" ]]; then  echo "Could not find a value for most recent Suite Name"; return 1; fi
-elif [[ -e $DEV_SUITES_DIR/"$1" ]]; then
+elif [[ -e $DEV_SUITES_PATH/"$1" ]]; then
   suiteName=$1
 fi
-
+cd "$DEV_SUITES_PATH"/"$suiteName"
+if [[ "$2" == "echo" ]]; then
+  echo "$PWD"
+fi

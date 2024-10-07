@@ -2,13 +2,13 @@
 echo getRepositories
 if [ ! "$suiteName" ] || [ "$1" ];then
   # shellcheck source=getSuite
-  source "$DEV_APP_DIR"/utils/getSuite "$1"
+  source "$DEV_UTILS_PATH"/suite/getSuite "$1"
 fi
 startingPwd=$PWD
 declare -g suiteName
 declare -ga Repositories
 Repositories=()
-oldRepositoriesDir="$DEV_SUITES_DIR"/"$suiteName"/repositories
+oldRepositoriesDir="$DEV_SUITES_PATH"/"$suiteName"/repositories
 if [[ -e "$oldRepositoriesDir" ]]; then
   cd "$oldRepositoriesDir" || return 1
   shopt -s nullglob dotglob

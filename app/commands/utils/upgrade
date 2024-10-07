@@ -6,7 +6,7 @@ declare -ga Repositories=()
 declare -ga Worktrees=()
 if [ ! "$suiteName" ] || [ "$1" ];then
   # shellcheck source=getSuite
-  source "$DEV_APP_DIR"/utils/getSuite "$1"
+  source "$DEV_UTILS_PATH"/suite/getSuite "$1"
 fi
 
 if [ ! "$suiteName" ]; then
@@ -14,13 +14,13 @@ if [ ! "$suiteName" ]; then
   return 1
 fi
 echo "Dev0:upgrade $suiteName"
-utils="$DEV_APP_DIR"/utils
-oldRepositoriesDir="$DEV_SUITES_DIR"/"$suiteName"/repositories
-newRepositoriesDir="$DEV_SUITES_DIR"/repositories
-oldWorktreesDir="$DEV_SUITES_DIR"/"$suiteName"/worktrees
-newWorktreesDir="$DEV_SUITES_DIR"/worktrees
+utils="$DEV_UTILS_PATH"
+oldRepositoriesDir="$DEV_SUITES_PATH"/"$suiteName"/repositories
+newRepositoriesPath="$DEV_SUITES_PATH"/repositories
+oldWorktreesDir="$DEV_SUITES_PATH"/"$suiteName"/worktrees
+
 mkdir -p newWorktreesDir
-mkdir -p newRepositoriesDir
+mkdir -p newRepositoriesPath
 
 if [[ -e "$oldRepositoriesDir" ]]; then
   source "$utils"/getRepositories "$1"
@@ -35,6 +35,7 @@ declare -a gitdir
 declare -a cmd
 
 for worktree in "${Worktrees[@]}"; do
+  touch "$DEV_SUITES_PATH"/"$suiteName"/worktreee."$worktree"
   mapfile -t gitdir < "$oldWorktreesDir"/"${worktree}"/.git
   repodir=${gitdir#gitdir: }
   repodir=${repodir%/worktrees/*}
@@ -45,7 +46,7 @@ for worktree in "${Worktrees[@]}"; do
   "${cmd[@]}"
 done
 for repository in "${Repositories[@]}"; do
-  cmd=(mv "$oldRepositoriesDir"/"$repository".git "$newRepositoriesDir"/)
+  cmd=(mv "$oldRepositoriesDir"/"$repository".git "$newRepositoriesPath"/)
     echo "${cmd[@]}"
   "${cmd[@]}"
 done

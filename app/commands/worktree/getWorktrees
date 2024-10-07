@@ -2,15 +2,19 @@
 echo getWorktrees
 if [ ! "$suiteName" ] || [ "$1" ];then
   # shellcheck source=getSuite
-  source "$DEV_APP_DIR"/utils/getSuite "$1"
+  source "$DEV_UTILS_PATH"/suite/getSuite "$1"
 fi
 startingPwd=$PWD
 declare -g suiteName
 declare -ga Worktrees
 Worktrees=()
-oldWorktreesDir="$DEV_SUITES_DIR"/"$suiteName"/worktrees
-if [[ -e "$oldWorktreesDir" ]]; then
-  cd "$oldWorktreesDir" || return 1
+if [[ -e "$DEV_SUITES_PATH"/"$suiteName"/worktrees ]]; then
+  worktreesDir="$DEV_SUITES_PATH"/"$suiteName"/worktrees
+else
+  worktreesDir="$DEV_SUITES_PATH"/worktrees
+fi
+if [[ -e "$worktreesDir" ]]; then
+  cd "$worktreesDir" || return 1
   shopt -s nullglob dotglob
   files=(*)
   for worktree in "${files[@]}"; do

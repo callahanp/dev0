@@ -3,8 +3,8 @@
 #  SPDX-FileComment:User by run and build commands
 #  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
 #  SPDX-License-Identifier: GPL-2.0-or-later
-# source $DEV_APP_DIR/Repositories [suite-name-filter]
-# source $DEV_APP_DIR/Repositories suite-name-filter [repository-name-filter]
+# source $DEV_APP_PATH/Repositories [suite-name-filter]
+# source $DEV_APP_PATH/Repositories suite-name-filter [repository-name-filter]
 #set -x
 # path is default?
 case "$1" in
@@ -40,12 +40,12 @@ GitRepositories=()
 _repositoryPaths=()
 declare -a _suitePaths
 if [[ "$1" == "" ]]; then
-    _suitePaths=( "$DEV_SUITES_DIR"/*/ )
+    _suitePaths=( "$DEV_SUITES_PATH"/*/ )
 else
-    if [[ -e "$DEV_SUITES_DIR"/"$1" ]]; then
-      _suitePaths=( "$DEV_SUITES_DIR"/"$1"/ )
+    if [[ -e "$DEV_SUITES_PATH"/"$1" ]]; then
+      _suitePaths=( "$DEV_SUITES_PATH"/"$1"/ )
     else
-      _suitePaths=( "$DEV_SUITES_DIR"/*"$1"*/ )
+      _suitePaths=( "$DEV_SUITES_PATH"/*"$1"*/ )
     fi
 fi
 
@@ -71,7 +71,7 @@ for sp in "${_suitePaths[@]}"; do
     fi
 done
 
-#mapfile -t -d ' ' _repositoryPaths < <( echo "$DEV_SUITES_DIR"/*"$1"*/repositories/*$2*.git; )
+#mapfile -t -d ' ' _repositoryPaths < <( echo "$DEV_SUITES_PATH"/*"$1"*/repositories/*$2*.git; )
 for rp in "${_repositoryPaths[@]}"; do
     rp=${rp%/} # <--- -name will be empty if you do not do this
     if [ "$name" ]; then
@@ -89,7 +89,7 @@ set +x
 # Tests:
 #
 
-# $DEV_APP_DIR/matchGitRepositories fg
-# $DEV_APP_DIR/matchGitRepositories "" meta
-# $DEV_APP_DIR/matchGitRepositories "fg" meta
-# $DEV_APP_DIR/matchGitRepositories "notfound" meta
+# $DEV_APP_PATH/matchGitRepositories fg
+# $DEV_APP_PATH/matchGitRepositories "" meta
+# $DEV_APP_PATH/matchGitRepositories "fg" meta
+# $DEV_APP_PATH/matchGitRepositories "notfound" meta

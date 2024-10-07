@@ -3,7 +3,7 @@
 #  SPDX-FileComment:User by run and build commands
 #  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
 #  SPDX-License-Identifier: GPL-2.0-or-later
-declare -g exit
+#declare -g exit
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   exit="exit"
 else

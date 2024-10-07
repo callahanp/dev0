@@ -26,7 +26,7 @@ declare -a tagList=()
 declare -A gitWorktrees
 declare -a worktreeList=()
 declare -A gitWorktreeInstances
-  for repo in $DEV_SUITES_DIR/*/repositories/*.git; do
+  for repo in $DEV_SUITES_PATH/*/repositories/*.git; do
     cd $repo
     mapfile -t branchList < <(git branch)
     for branch in "${branchList[@]}"; do
@@ -43,7 +43,7 @@ declare -A gitWorktreeInstances
       gitWorktrees["$gitreference"]+=" $worktree $repo "
     done
   done
-  for worktree in  $DEV_SUITES_DIR/*/worktrees/*; do
+  for worktree in  $DEV_SUITES_PATH/*/worktrees/*; do
     cd $worktree
     echo worktree:$worktree
     echo gitReference: $gitReference
@@ -81,7 +81,7 @@ parameters["upstream-url"]=""
 
 function identifyAsSuiteName(){
   echo "identifyAsSuiteName $1"
-  if [[ -e "$DEV_SUITES_DIR"/$1 ]]; then return 0
+  if [[ -e "$DEV_SUITES_PATH"/$1 ]]; then return 0
   else return 1
   fi
 }

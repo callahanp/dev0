@@ -20,7 +20,7 @@
         "args": ["w"],
         "terminalKind": "integrated",
         "env": {
-                "DEV_SUITES_DIR": "/work/suites"
+                "DEV_SUITES_PATH": "/work/suites"
             }
     }
   ]

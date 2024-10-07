@@ -18,7 +18,7 @@ shopt -s nullglob nocaseglob
 declare -a _repositories
 GitRepositories=()
 GitWorktrees=()
-source "$DEV_APP_DIR"/matchGitRepositories -p "$1" "$2"
+source "$DEV_APP_PATH"/matchGitRepositories -p "$1" "$2"
     # shellcheck disable=SC2068
 for r in "${GitRepositories[@]}"; do
   if [[ ! -e "$r" ]]; then
@@ -68,15 +68,15 @@ shopt -u nullglob nocaseglob
 #         ;;
 # esac
         # echo
-        # "$DEV_APP_DIR"/bar ${#r}
+        # "$DEV_APP_PATH"/bar ${#r}
         # echo "$r"
-        # "$DEV_APP_DIR"/bar ${#r}
+        # "$DEV_APP_PATH"/bar ${#r}
         #Tests
-# "$DEV_APP_DIR/matchGitWorktrees"; echo ${GitWorktrees[@]}
-# "$DEV_APP_DIR/matchGitWorktrees" fg
-# "$DEV_APP_DIR/matchGitWorktrees" f
-# "$DEV_APP_DIR/matchGitWorktrees" -n fg simgear
-# "$DEV_APP_DIR/matchGitWorktrees" -p fg
+# "$DEV_APP_PATH/matchGitWorktrees"; echo ${GitWorktrees[@]}
+# "$DEV_APP_PATH/matchGitWorktrees" fg
+# "$DEV_APP_PATH/matchGitWorktrees" f
+# "$DEV_APP_PATH/matchGitWorktrees" -n fg simgear
+# "$DEV_APP_PATH/matchGitWorktrees" -p fg
 
 #listFrom="repositories"
 # case $listFrom in
@@ -89,12 +89,12 @@ shopt -u nullglob nocaseglob
 #     declare -a _suitePaths
 #     declare -a _worktreePaths
 #     if [[ "$1" == "" ]]; then
-#         _suitePaths=( "$DEV_SUITES_DIR"/*/ )
+#         _suitePaths=( "$DEV_SUITES_PATH"/*/ )
 #     else
-#         if [[ -e "$DEV_SUITES_DIR"/"$1" ]]; then
-#           _suitePaths=( "$DEV_SUITES_DIR"/"$1"/ )
+#         if [[ -e "$DEV_SUITES_PATH"/"$1" ]]; then
+#           _suitePaths=( "$DEV_SUITES_PATH"/"$1"/ )
 #         else
-#           _suitePaths=( "$DEV_SUITES_DIR"/*"$1"*/ )
+#           _suitePaths=( "$DEV_SUITES_PATH"/*"$1"*/ )
 #         fi
 #     fi
 #     for sp in "${_suitePaths[@]}"; do

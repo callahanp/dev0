@@ -11,15 +11,15 @@ else
   exit="return"
 fi
 declare -g suite
-source "$DEV_APP_DIR"/utils/getSuite "$1"
+source "$DEV_UTILS_PATH"/suite/getSuite "$1"
 declare -g gitReference
-source "$DEV_APP_DIR"/utils/getGitReference "$2"
+source "$DEV_UTILS_PATH"/getGitReference "$2"
 
-projectDir="$DEV_SUITES_DIR"/"$suite"/project
-if [[ ! -d "$projectDir" ]]; then
-  echo Could not find "$projectDir directory" ; $exit 1
+projectPath="$DEV_SUITES_PATH"/"$suite"/project
+if [[ ! -d "$projectPath" ]]; then
+  echo Could not find "$projectPath directory" ; $exit 1
 fi
-projectRunScript=$projectDir/run
+projectRunScript=$projectPath/run
 if [[ ! -f "$projectRunScript" ]]; then
   echo Could not find "$projectRunScript script" ; $exit 1
 fi

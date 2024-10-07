@@ -23,10 +23,10 @@ else
 fi
 
 # shellcheck disable=SC1091
-source "$DEV_APP_DIR"/utils/getSuite "$1"
+source "$DEV_UTILS_PATH"/suite/getSuite "$1"
 if [[ "$suite" != "" && "$suite" == "$1" ]]; then $exit 0; fi
 if [[ "$1" == "" ]]; then
-  _gitReference=$( <"$DEV_SUITES_DIR"/"$suite"/project/prevGitReference )
+  _gitReference=$( <"$DEV_SUITES_PATH"/"$suite"/project/prevGitReference )
   if [[ "$_gitReference" == "" ]]; then
     echo "Could not find a value for most recent git reference";
     echo "Please specify a git reference with a git worktree";
@@ -36,11 +36,11 @@ if [[ "$1" == "" ]]; then
   $exit 0
 fi
 if [[ "$suite" == "" ]]; then
-    _worktrees=( "$DEV_SUITES_DIR"/*/worktrees/*"$1"* )
-    _builds=(  "$DEV_SUITES_DIR"/*/builds/*"$1"* )
+    _worktrees=( "$DEV_SUITES_PATH"/*/worktrees/*"$1"* )
+    _builds=(  "$DEV_SUITES_PATH"/*/builds/*"$1"* )
 else
-    _worktrees=( "$DEV_SUITES_DIR"/"$suite"/worktrees/*"$1"* )
-    _builds=(  "$DEV_SUITES_DIR"/"$suite"/builds/*"$1"* )
+    _worktrees=( "$DEV_SUITES_PATH"/"$suite"/worktrees/*"$1"* )
+    _builds=(  "$DEV_SUITES_PATH"/"$suite"/builds/*"$1"* )
 fi
 for _worktree in "${_worktrees[@]}"; do
     _worktreeGitReference="${_worktree#*[.]}"

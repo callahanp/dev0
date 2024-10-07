@@ -12,16 +12,16 @@
 # cd w current-build-directory-symlink-name
 # cd build-worktree-symlink-name
 echo "cdd $*"
-pwdFragment="${PWD##"$DEV_SUITES_DIR"/}"
-if [[ "$pwdFragment" != "${PWD}"  &&  "$DEV_SUITES_DIR/${pwdFragment%%/*}" != "$DEV_SUITES_DIR" ]]; then
-  suiteDir=$DEV_SUITES_DIR/${pwdFragment%%/*}
+pwdFragment="${PWD##"$DEV_SUITES_PATH"/}"
+if [[ "$pwdFragment" != "${PWD}"  &&  "$DEV_SUITES_PATH/${pwdFragment%%/*}" != "$DEV_SUITES_PATH" ]]; then
+  suiteDir=$DEV_SUITES_PATH/${pwdFragment%%/*}
 
   case "$1" in
     r|repositories)
-      cd "$suiteDir"/repositories  || return 1
+      cd "$suDEV_SUITES_PATHiteDir"/repositories  || return 1
       ;;
     w|worktrees)
-      cd "$suiteDir"/worktrees  || return 1
+      cd "$DEV_SUITES_PATH"/worktrees  || return 1
       ;;
     b|builds)
       cd "$suiteDir"/builds  || { echo error; return 1;}

@@ -1,8 +1,8 @@
 #!/bin/bash
 # shellcheck disable=SC2317
 
-# source $DEV_APP_DIR/SuiteName [suite-name-filter] [ [ "name" ] | "path" ]
-# source $DEV_APP_DIR/Repositories suite-name-filter [repository-name-filter]
+# source $DEV_APP_PATH/SuiteName [suite-name-filter] [ [ "name" ] | "path" ]
+# source $DEV_APP_PATH/Repositories suite-name-filter [repository-name-filter]
 
 # nocaseglob, nullglob, globskipdots, failglob, and dotglob
 shopt -s nullglob nocaseglob
@@ -21,12 +21,12 @@ case "$1" in
 esac
 declare -a _suitePaths
 if [[ "$1" == "" ]]; then
-    _suitePaths=( "$DEV_SUITES_DIR"/*/ )
+    _suitePaths=( "$DEV_SUITES_PATH"/*/ )
 else
-    if [[ -e "$DEV_SUITES_DIR"/"$1" ]]; then
-      _suitePaths=( "$DEV_SUITES_DIR"/"$1"/ )
+    if [[ -e "$DEV_SUITES_PATH"/"$1" ]]; then
+      _suitePaths=( "$DEV_SUITES_PATH"/"$1"/ )
     else
-      _suitePaths=( "$DEV_SUITES_DIR"/*"$1"*/ )
+      _suitePaths=( "$DEV_SUITES_PATH"/*"$1"*/ )
     fi
 fi
 shopt -u nullglob nocaseglob
@@ -45,9 +45,9 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 fi
 # no exit or return - can be sourced or called
 #Tests
-# "$DEV_APP_DIR/matchSuites"; echo $Suites
-# "$DEV_APP_DIR/matchSuites" fg
-# "$DEV_APP_DIR/matchSuites" f
-# "$DEV_APP_DIR/matchSuites" -n fg
-# "$DEV_APP_DIR/matchSuites" -p fg
+# "$DEV_APP_PATH/matchSuites"; echo $Suites
+# "$DEV_APP_PATH/matchSuites" fg
+# "$DEV_APP_PATH/matchSuites" f
+# "$DEV_APP_PATH/matchSuites" -n fg
+# "$DEV_APP_PATH/matchSuites" -p fg
 

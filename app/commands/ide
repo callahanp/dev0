@@ -8,32 +8,37 @@
 #set -x
 declare  exit
 declare -g exit
+declare -g suiteName
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   exit="exit"
 else
   exit="return"
 fi
-declare -g suite
-echo source "$DEV_APP_DIR"/utils/getSuite "$1"
-source "$DEV_APP_DIR"/utils/getSuite "$1"
-declare -g gitReference
-echo source "$DEV_APP_DIR"/utils/getGitReference "$2"
-source "$DEV_APP_DIR"/utils/getGitReference "$2"
-
-declare projectDir
-declare editsDir
-declare -a codeWorkspacePaths
+declare -g suiteName
+if [ "$DEV_DEBUG" ]; then echo ide: source "$DEV_UTILS_PATH"/suite/getSuite "$1" ; fi
+source "$DEV_COMMANDS_PATH"/suite/getSuite "$1"
+declare projectPath
+declare -a codeWorkspacePathExact
+declare -a codeWorkspacePathWildcard
+unset codeWorkspacePath
 shopt -s nullglob
-#projectDir="$DEV_SUITES_DIR"/"$suite"/project
-editsDir="$DEV_SUITES_DIR"/"$suite"/edits
-codeWorkspacePaths=("$DEV_SUITES_DIR"/"$suite"/edits/"$suite".*"$gitReference"*.code-workspace)
-echo "${#codeWorkspacePaths[@]}"
-echo "${codeWorkspacePaths[@]}"
-if [[ ${#codeWorkspacePaths[@]} -eq 1 && -e $editsDir && -e  ${codeWorkspacePaths[0]} ]]; then
-  cd "$editsDir" ||{ echo "can''t find $editsDir"; return;}
-  code "${codeWorkspacePaths[0]}"
-elif [[ ${#codeWorkspacePaths[@]} -gt 1   && -e $editsDir ]]; then
-        echo  "  ${codeWorkspacePaths[*]}"
-        echo "be more specific than $gitReference"
+projectPath="$DEV_SUITES_PATH"/"$suiteName"/project
+codeWorkspacePathExact=("$projectPath"/"$suiteName"."$2".code-workspace)
+codeWorkspacePathWildcard=("$projectPath"/*"$2"*.code-workspace)
+
+if [[ ${#codeWorkspacePathExact[@]} -eq 1 && -e  ${codeWorkspacePathExact[0]} ]]; then
+  codeWorkspacePath=${codeWorkspacePathExact[0]}
+elif
+[[ ${#codeWorkspacePathWildcard[@]} -eq 1 && -e  ${codeWorkspacePathWildcard[0]} ]]; then
+  codeWorkspacePath=${codeWorkspacePathWildcard[0]}
+fi
+if [ "$codeWorkspacePath" ]; then
+  echo "  cd $projectPath"
+  cd "$projectPath" ||{ echo "can''t find $projectPath"; return;}
+  echo "  code ""${codeWorkspacePath}"
+  code "${codeWorkspacePath}"
+elif [[ ${#codeWorkspacePathWildcard[@]} -gt 1   && -e $projectPath ]]; then
+        echo  "  ${codeWorkspacePathWildcard[*]}"
+        echo "be more specific than $2"
         $exit 1
 fi

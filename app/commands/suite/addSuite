@@ -1,0 +1,25 @@
+#!/bin/bash
+#  SPDX-FileName: addSuite
+#  SPDX-FileComment: Creates a new suite; optionally opens code at suite level
+#  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
+#  SPDX-License-Identifier: GPL-2.0-or-later
+# script may be run or sourced
+declare -g exit
+# shellcheck source=../utils/setExit
+source "$DEV_UTILS_PATH"/setExit
+suiteName="$1"
+suitePath="$DEV_SUITES_PATH"/"$suiteName"
+if [[ -e "$suitePath" ]]; then
+  echo "Suite $suiteName was previously added"
+fi
+
+mkdir -p "$suitePath"
+mkdir -p "$suitePath"/project
+
+if [[ "${2,,}" == "code" || "${2,,}" == "vscode" ]]; then
+  echo "cd $suitePath"
+  cd "$suitePath"|| $exit 1
+  echo "code ."
+  code .
+fi
+$exit 0
