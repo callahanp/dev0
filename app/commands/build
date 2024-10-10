@@ -3,22 +3,12 @@
 #  SPDX-FileComment:User by run and build commands
 #  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
 #  SPDX-License-Identifier: GPL-2.0-or-later
-declare exit
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-  exit="exit"
-else
-  exit="return"
-fi
-if [[ "$1" == "-x" ]]; then { set -x; shift; } fi
-declare -g suite
-# shellcheck disable=SC1091
-source "$DEV_UTILS_PATH"/suite/getSuite "$@"
-declare -g suite
-source "$DEV_UTILS_PATH"/suite/getSuite "$@"
-declare -g gitReference
-source "$DEV_UTILS_PATH"/getGitReference "$2"
 
-projectPath="$DEV_SUITES_PATH"/"$suite"/project
+exit="return";if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then exit="exit"; fi
+if [[ "$1" == "-x" ]]; then { set -x; shift; } fi
+
+source "$DEV_COMMANDS_PATH"/suite/getSuite "$@"
+projectPath="$DEV_SUITES_PATH"/"$suiteName"/project
 
 if [[ ! -e "$projectPath" ]]; then
   echo Could not find "$projectPath directory" ;  $exit 1

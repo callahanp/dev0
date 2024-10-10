@@ -26,4 +26,3 @@ done
 if [[ $suite != "" ]]; then
   echo "$cMakeBuildType" >"$DEV_SUITES_PATH"/"$suite"/project/cMakeBuildType
 fi
-set +x

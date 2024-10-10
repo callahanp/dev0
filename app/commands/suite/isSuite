@@ -1,0 +1,8 @@
+#!/bin/bash
+# source $DEV_COMMANDS_PATH/suite/isSuite
+
+if [[ -e "$DEV_SUITES_PATH"/"$1" ]]; then
+  return 0
+else
+  return 1
+fi

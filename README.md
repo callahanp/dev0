@@ -103,7 +103,7 @@ Here's a typical example with a bit of complexity.
     │   ├── build
     │   ├── install
     │   │   ├── flightgear
-    │   │       └── fgdata ->/work/suites/fg/worktrees/flightgear-fgdata.next
+    │   │       └── fgdata ->/work/suites/fg/worktrees/fgdata.next
     ├── tickets.2895.Debug
     │   ├── fgmeta -> /work/suites/fg/worktrees/callahanpa-fgmeta.tickets.2895
     │   ├── flightgear -> /work/suites/fg/worktrees/flightgear-flightgear.next
@@ -115,7 +115,7 @@ Here's a typical example with a bit of complexity.
     |   |       └── ... (build files)
     │   ├── install
     │   │   ├── flightgear
-    │   │       └── fgdata ->/work/suites/fg/worktrees/flightgear-fgdata.next
+    │   │       └── fgdata ->/work/suites/fg/worktrees/fgdata.next
     |   |    (additional files and directories required for run are either
     |   |     in place here, or are created by the build process)
     ├── tickets.2895.Release

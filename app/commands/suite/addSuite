@@ -3,10 +3,10 @@
 #  SPDX-FileComment: Creates a new suite; optionally opens code at suite level
 #  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
 #  SPDX-License-Identifier: GPL-2.0-or-later
-# script may be run or sourced
+
+#  source "$DEV_COMMANDS_PATH/"suite/addSuite suite-name
 declare -g exit
-# shellcheck source=../utils/setExit
-source "$DEV_UTILS_PATH"/setExit
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then exit="exit"; else exit="return"; fi
 suiteName="$1"
 suitePath="$DEV_SUITES_PATH"/"$suiteName"
 if [[ -e "$suitePath" ]]; then

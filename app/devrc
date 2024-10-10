@@ -33,6 +33,27 @@ cd "${DEV1}"  || return 1
 # shellcheck enable=require-variable-braces
 # shellcheck disable=2142
 # shellcheck disable=2139
+function findRepo () {
+  cd /work/suites/repositories/ || exit 1
+  if [ "$1" ]; then
+    dirs=(*"$1"*)
+    if [ ${#dirs[@]} -eq 0 ]; then dirs=("$1"*); fi
+    if [ ${#dirs[@]} -eq 0 ]; then dirs=(*"$1"); fi
+    if [ ${#dirs[@]} -eq 1 ]; then
+      cd "${dirs[0]}" || exit 1
+      echo "$PWD"
+    else
+      echo "try again with one of these:"
+      for dir in "${dirs[@]}"; do
+        echo "$dir"
+      done
+      return 1
+    fi
+  else
+        echo "$PWD"
+  fi
+}
+alias repo="f(){ if findRepo \$1; then cd \$(findRepo \$1); echo pwd: \$PWD; fi; unset -f f; }; f"
 alias suites="cd $(pwd)/..; ls ./"
 # shellcheck disable=2142
 
@@ -80,6 +101,6 @@ copy_alias debug g
 
 # shellcheck disable=SC2142
 # shellcheck disable=SC2139
-alias suites="cd ${DEV1_SUITES_PATH} || return 1; ls -1"
+alias suites="cd ${DEV_SUITES_PATH} || return 1; ls -1"
 
 cd "$restore_dir" || return 1
