@@ -23,10 +23,9 @@ else
 fi
 
 # shellcheck disable=SC1091
-source "$DEV_APP_DIR"/utils/getSuite "$1"
-if [[ "$suite" != "" && "$suite" == "$1" ]]; then $exit 0; fi
-if [[ "$1" == "" ]]; then
-  _gitReference=$( <"$DEV_SUITES_DIR"/"$suite"/project/prevGitReference )
+if [[ "$suiteName" != "$1" ]]; then source "$DEV_UTILS_PATH"/suite/getSuite "$1"; fi
+if [[ "$2" == "" ]]; then
+  _gitReference=$( <"$DEV_SUITES_PATH"/"$suiteName"/project/prevGitReference )
   if [[ "$_gitReference" == "" ]]; then
     echo "Could not find a value for most recent git reference";
     echo "Please specify a git reference with a git worktree";
@@ -35,36 +34,23 @@ if [[ "$1" == "" ]]; then
   gitReference=$_gitReference
   $exit 0
 fi
-if [[ "$suite" == "" ]]; then
-    _worktrees=( "$DEV_SUITES_DIR"/*/worktrees/*"$1"* )
-    _builds=(  "$DEV_SUITES_DIR"/*/builds/*"$1"* )
-else
-    _worktrees=( "$DEV_SUITES_DIR"/"$suite"/worktrees/*"$1"* )
-    _builds=(  "$DEV_SUITES_DIR"/"$suite"/builds/*"$1"* )
-fi
-for _worktree in "${_worktrees[@]}"; do
-    _worktreeGitReference="${_worktree#*[.]}"
-    echo "_worktree: $_worktree"
-  _uniqueGitReferences[${_worktreeGitReference}]="${_worktreeGitReference}"
-    echo "_uniqueGitReferences[${_worktreeGitReference}]: ${_uniqueGitReferences[${_worktreeGitReference}]}"
-done
+_builds=(  "$DEV_SUITES_PATH"/"$suiteName"/builds/*$2* )
+#declare -p _builds
 for _build in "${_builds[@]}"; do
    #echo" build: $_build"
   _buildGitReference=${_build##*[/]}
-  _buildGitReference=${_buildGitReference%[.][DRM]*}
-  #echo "_buildGitReference: $_buildGitReference"
+  _buildGitReference=${_buildGitReference%[.][drm]*}
+  echo "_buildGitReference: $_buildGitReference"
   _uniqueGitReferences[$_buildGitReference]="${_buildGitReference}"
-  #echo _uniqueGitReferences["$_buildGitReference"]: "${_uniqueGitReferences["$_buildGitReference"]}"
+  echo _uniqueGitReferences["$_buildGitReference"]: "${_uniqueGitReferences["$_buildGitReference"]}"
 done
-#dclare -p _uniqueGitReferences
+#declare -p _uniqueGitReferences
 if [ ${#_uniqueGitReferences[@]} -eq 0 ]; then
-  echo "Error: Could not find a worktree matching $1"
+  echo "Error: Could not find a git reference matching $2"
 else
   if [ ${#_uniqueGitReferences[@]} -eq 1 ]; then
     for key in "${!_uniqueGitReferences[@]}"; do
-    export
-    # shellcheck disable=SC2034
-    gitReference=${_uniqueGitReferences[$key]}
+      gitReference=${_uniqueGitReferences[$key]}
     $exit 0
     done
   else

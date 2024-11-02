@@ -1,0 +1,37 @@
+#!/bin/bash
+#  SPDX-FileName: getSuite
+#  SPDX-FileComment:User by run and build commands
+#  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
+#  SPDX-License-Identifier: GPL-2.0-or-later
+
+# source  "$DEV_COMMANDS_PATH/"suite [suite-name|partial-suite-name]
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then exit="exit"; else exit="return"; fi
+currentDir=$(pwd)
+suiteName=""
+if [ $# -eq 0 ]; then
+  if [[ "${currentDir##"$DEV_SUITES_PATH/"}" != "$currentDir" ]]; then
+      partialPath=${currentDir##"$DEV_SUITES_PATH/"}
+      suiteName=${partialPath%%/*}
+  else
+    suiteName="$(<"$DEV_SUITES_PATH"/currentSuite)";
+  fi
+  if [[ "$suiteName" == "" ]]; then  echo "Could not find a value for most recent Suite Name"; return 1; fi
+else
+  for checkIfSuite in "$@"; do
+    if [[ "$checkValue" == "--" ]]; then break; fi
+    if [[ -e $DEV_SUITES_PATH/"$checkIfSuite" ]]; then
+      suiteName=$1
+      break;
+    else
+      suitePaths=("$DEV_SUITES_PATH"/"*$1"*)
+      if [[ ${#suitePaths[@]} == 1 ]]; then
+        suiteName=$(basename "${suitePaths[0]}")
+      fi
+    fi
+  done
+fi
+if [ ! "$suiteName" ]; then $exit 1; fi
+cd "$DEV_SUITES_PATH"/"$suiteName" || $exit 1
+if [[ "$2" == "echo" ]]; then
+  echo "$PWD"
+fi

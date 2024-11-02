@@ -1,4 +1,5 @@
 #!/bin/bash
+# devrc must be sourced only
 #set -x
 restore_dir=$(pwd)
 SCRIPT_PATH="${BASH_SOURCE[0]}"
@@ -12,72 +13,78 @@ SCRIPT_DIR="$(cd -P "$(dirname -- "$SCRIPT_PATH")" >/dev/null 2>&1 && pwd)"
 # SCRIPT_DIR is guaranteed to be the directory where this script lives
 # no matter where you call it from, or how you got to it.
 cd "$SCRIPT_DIR" || return 1
-# This should leave us at the top level of dev1 - No matter what.
+# This should leave us at the top level of dev0 - No matter what.
 
-echo "starting dev1rc"
-export DEV1=$(pwd)
-if [[ "$DEV1_SUITES_PATH" == "" ]]; then
-    echo "Unable to find DEV1 suites.  "
+echo "starting devrc"
+DEV=$(pwd)
+export DEV
+echo "$DEV"
+
+if [[ "$DEV_SUITES_PATH" == "" ]]; then
+    echo "Unable to find DEV suites.  "
     echo "Please define and export DEV1_SUITES_PATH in your ~/.bashrc"
     echo " or place DEV1 in a directory named suites"
     return
 fi
-export DEV1_COMMANDS_PATH=$DEV1/commands
-export DEV1_TEMPLATES_PATH=$DEV1/templates
+export DEV_APP_PATH=$DEV_SUITES_PATH/worktrees/dev0.next
+export DEV_MAINT_COMMANDS_PATH=$DEV_APP_PATH/maint
+export DEV_COMMANDS_PATH=$DEV_APP_PATH/cmd
+export DEV_UTILS_PATH=$DEV_COMMANDS_PATH/utils
 cd "${DEV1}"  || return 1
 # shellcheck enable=require-variable-braces
 # shellcheck disable=2142
 # shellcheck disable=2139
+function findRepo () {
+  cd /work/suites/repositories/ || exit 1
+  if [ "$1" ]; then
+    dirs=(*"$1"*)
+    if [ ${#dirs[@]} -eq 0 ]; then dirs=("$1"*); fi
+    if [ ${#dirs[@]} -eq 0 ]; then dirs=(*"$1"); fi
+    if [ ${#dirs[@]} -eq 1 ]; then
+      cd "${dirs[0]}" || exit 1
+      echo "$PWD"
+    else
+      echo "try again with one of these:"
+      for dir in "${dirs[@]}"; do
+        echo "$dir"
+      done
+      return 1
+    fi
+  else
+        echo "$PWD"
+  fi
+}
+alias repo="f(){ if findRepo \$1; then cd \$(findRepo \$1); echo pwd: \$PWD; fi; unset -f f; }; f"
 alias suites="cd $(pwd)/..; ls ./"
 # shellcheck disable=2142
 
 #TODO: use bash functions for these instead of aliases
 # shellcheck disable=SC2142
 # shellcheck disable=SC2139
-alias cdd="f(){ source $(pwd)/commands/cdd \$@; unset -f f; }; f"
+alias cdd="f(){ source $(pwd)/maint/cdd \$@; unset -f f; }; f"
 # shellcheck disable=SC2142
 # shellcheck disable=SC2139
-alias new="f(){ source $(pwd)/commands/new \$@; unset -f f; }; f"
+alias ide="f(){ source $(pwd)/cmd/ide \$@; unset -f f; }; f"
 # shellcheck disable=SC2142
 # shellcheck disable=SC2139
-alias context="f(){ source $(pwd)/commands/context \$@; unset -f f; }; f"
+alias suite="f(){ source $(pwd)/cmd/suite \$1 echo; unset -f f; }; f"
 # shellcheck disable=SC2142
 # shellcheck disable=SC2139
-alias project="f(){ source $(pwd)/commands/project \$@; unset -f f; }; f"
+alias build="f(){ source $(pwd)/cmd/build \$@; unset -f f; }; f"
 # shellcheck disable=SC2142
 # shellcheck disable=SC2139
-alias ide="f(){ source $(pwd)/commands/ide \$@; unset -f f; }; f"
+alias run="f(){ source $(pwd)/cmd/run \$@;unset -f f; }; f"
 # shellcheck disable=SC2142
 # shellcheck disable=SC2139
-alias build="f(){ source $(pwd)/commands/build \$@; unset -f f; }; f"
+alias debug="f(){ source $(pwd)/cmd/run \$@ debug ; unset -f f; }; f"
 # shellcheck disable=SC2142
 # shellcheck disable=SC2139
-alias run="f(){ source $(pwd)/commands/run \$@;unset -f f; }; f"
-# shellcheck disable=SC2142
-# shellcheck disable=SC2139
-alias debug="f(){ source $(pwd)/commands/run \$@ debug ; unset -f f; }; f"
-# shellcheck disable=SC2142
-# shellcheck disable=SC2139
-alias suite="f(){ source $(pwd)/commands/suite \$@; unset -f f; }; f"
-# shellcheck disable=SC2142
-# shellcheck disable=SC2139
-alias status="f(){ source $(pwd)/commands/status \$@; unset -f f; }; f"
-# shellcheck disable=SC2142
-# shellcheck disable=SC2139
-alias maint="f(){ source $(pwd)/commands/maint \$@; unset -f f; }; f"
-# shellcheck disable=SC2142
-# shellcheck disable=SC2139
-alias dev1rc="source $(pwd)/dev1rc"
-
 function copy_alias(){
 # shellcheck disable=SC2142
 # shellcheck disable=SC2139
 # shellcheck disable=SC2086
-alias $2="$(alias $1 |sed -e s/.*=// -e s/\'//g )"
-
+  alias $2="$(alias $1 |sed -e 's/.*=//' -e s/\'//g )"
 }
-copy_alias new n
-copy_alias context c
 copy_alias suite s
 copy_alias ide i
 copy_alias build b
@@ -86,6 +93,6 @@ copy_alias debug g
 
 # shellcheck disable=SC2142
 # shellcheck disable=SC2139
-alias suites="cd ${DEV1_SUITES_PATH} || return 1; ls -1"
+alias suites="cd ${DEV_SUITES_PATH} || return 1; ls -1"
 
 cd "$restore_dir" || return 1

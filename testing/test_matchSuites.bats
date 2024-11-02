@@ -41,7 +41,7 @@ Fake=""
 
 
 @test "3. Run With Test Data " {
-    export DEV_SUITES_DIR=../test_data
+    export DEV_SUITES_PATH=../test_data
     export TEST_TEST_TEST="This was set in the test script before run"
     run ../app/matchSuites
       i=0
@@ -57,7 +57,7 @@ Fake=""
 
 
 @test "4. Run With Suite Named w " {
-    export DEV_SUITES_DIR=../test_data
+    export DEV_SUITES_PATH=../test_data
     export TEST_TEST_TEST="This was set in the test script before run"
     run ../app/matchSuites w
       i=0
@@ -71,7 +71,7 @@ Fake=""
 
 }
 @test "4. Run With Suite Abbreviation  x " {
-    export DEV_SUITES_DIR=../test_data
+    export DEV_SUITES_PATH=../test_data
     export TEST_TEST_TEST="This was set in the test script before run"
     run ../app/matchSuites x
       i=0
@@ -84,7 +84,7 @@ Fake=""
 
 }
 @test "5. Run With Suite Abbreviation  wxyz " {
-    export DEV_SUITES_DIR=../test_data
+    export DEV_SUITES_PATH=../test_data
     export TEST_TEST_TEST="This was set in the test script before run"
     run ../app/matchSuites wxyz
       i=0
@@ -97,7 +97,7 @@ Fake=""
 
 }
 @test "6. Run With Unknown Suite Abbreviation  zzzz " {
-    export DEV_SUITES_DIR=../test_data
+    export DEV_SUITES_PATH=../test_data
     export TEST_TEST_TEST="This was set in the test script before run"
     run ../app/matchSuites zzzz
       i=0

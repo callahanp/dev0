@@ -1,0 +1,29 @@
+#!/bin/bash
+# worktree <local-repository-name,commit-ish>...
+startingDirectory=$PWD
+cd "$DEV_REPOSITORIES_PATH"
+exit="return";if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then exit="exit"; fi
+C=''
+echo $0
+for i in "$@"; do
+        case "$i" in
+            *\'*)
+                i=`printf "%s" "$i" | sed "s/'/'\"'\"'/g"`
+                ;;
+            *) : ;;
+        esac
+        C="$C '$i'"
+        echo $C
+done
+printf "clone %s\n" "$C" |tee >>$DEV_SUITES_PATH/command.log
+declare -a originalParameters
+originalParameters=("$@")
+
+for item in "$@"; do
+    if [[ "$item" == "delete" || "$item" == "remove" ]]; then
+        operation="remove"; 
+    else 
+        operation="add"
+    end
+    if [[ "$item" == "-f" ]]; then force="-f"; fi
+done

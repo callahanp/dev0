@@ -9,11 +9,11 @@
 
 #bats_require_minimum_version 1.5.0
 setup_file() {
-    export DEV_APP_DIR=../app
+    export DEV_APP_PATH=../app
 }
 
 @test "1. can run our script" {
-      export DEV_SUITES_DIR=../test_data
+      export DEV_SUITES_PATH=../test_data
     run ../app/matchGitWorktrees
       i=0
   while [ $i -lt ${#lines[@]} ]; do
@@ -27,7 +27,7 @@ setup_file() {
 }
 
 @test "2. Run With Test Data " {
-    export DEV_SUITES_DIR=../test_data
+    export DEV_SUITES_PATH=../test_data
 
     run ../app/matchGitWorktrees
       i=0
@@ -47,7 +47,7 @@ setup_file() {
 }
 
 @test "3. Run With Suite Named wxy " {
-    export DEV_SUITES_DIR=../test_data
+    export DEV_SUITES_PATH=../test_data
     export TEST_TEST_TEST="This was set in the test script before run"
     run ../app/matchGitWorktrees wxy
       i=0
@@ -62,7 +62,7 @@ setup_file() {
   [ "${lines[0]#*test_data}" == "/wxyz/worktrees/wxyz.next" ]
 }
 @test "3a. Run With Suite Named yyyy " {
-    export DEV_SUITES_DIR=../test_data
+    export DEV_SUITES_PATH=../test_data
     export TEST_TEST_TEST="This was set in the test script before run"
     run ../app/matchGitWorktrees yyyy
       i=0
@@ -79,7 +79,7 @@ setup_file() {
 /work/suites/dev0/worktrees/dev0.next/test_data/wxyz/worktrees/yyyy.tickets.1234
 }
 @test "4. Run With Suite Abbreviation  x " {
-    export DEV_SUITES_DIR=../test_data
+    export DEV_SUITES_PATH=../test_data
 
     run ../app/matchGitWorktrees x
       i=0
@@ -97,7 +97,7 @@ setup_file() {
 }
 
 @test "5. Run With Suite Abbreviation  wxyz " {
-    export DEV_SUITES_DIR=../test_data
+    export DEV_SUITES_PATH=../test_data
     run ../app/matchGitWorktrees wxyz
       i=0
   while [ $i -lt ${#lines[@]} ]; do
@@ -112,7 +112,7 @@ setup_file() {
 
 }
 @test "6. Run With Unknown Suite Abbreviation  zzzz " {
-    export DEV_SUITES_DIR=../test_data
+    export DEV_SUITES_PATH=../test_data
 
     run ../app/matchGitWorktrees zzzz
       i=0
@@ -128,7 +128,7 @@ setup_file() {
 }
 
 @test "7. one specific git: wxyz.git wxyz wxyz " {
-    export DEV_SUITES_DIR=../test_data
+    export DEV_SUITES_PATH=../test_data
 
     run ../app/matchGitWorktrees  wxyz yyyy
       i=0
@@ -145,7 +145,7 @@ setup_file() {
 
 
 @test "8. non-existent git: wxyz.git wxyz zzzz " {
-    export DEV_SUITES_DIR=../test_data
+    export DEV_SUITES_PATH=../test_data
 
     run ../app/matchGitWorktrees  wxyz zzzz
       i=0
@@ -160,7 +160,7 @@ setup_file() {
 
 }
 @test "9. Suite blank, git reference only" {
-  export DEV_SUITES_DIR=../test_data
+  export DEV_SUITES_PATH=../test_data
   run ../app/matchGitWorktrees ""  next
   i=0
   while [ $i -lt ${#lines[@]} ]; do

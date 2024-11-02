@@ -1,0 +1,21 @@
+#!/bin/bash
+#  SPDX-FileName: dev0/app/build
+#  SPDX-FileComment:User by run and build commands
+#  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
+#  SPDX-License-Identifier: GPL-2.0-or-later
+
+exit="return";if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then exit="exit"; fi
+if [[ "$1" == "-x" ]]; then { set -x; shift; } fi
+
+source "$DEV_COMMANDS_PATH"/suite/getSuite "$@"
+projectPath="$DEV_SUITES_PATH"/"$suiteName"/project
+
+if [[ ! -e "$projectPath" ]]; then
+  echo Could not find "$projectPath directory" ;  $exit 1
+fi
+projectBuildScript=$projectPath/build
+if [[ ! -e "$projectBuildScript" ]]; then
+  echo Could not find "$projectBuildScript script" ; $exit 1;
+fi
+
+source $projectBuildScript "$@"

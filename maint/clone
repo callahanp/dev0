@@ -1,0 +1,67 @@
+#!/bin/bash
+# clone <upstream_repository_url> <local_repository_name> [no_push] [no_pull] [origin origin_url [no_push] [no_pull]]  <commit_ish...>
+startingDirectory=$PWD
+cd "$DEV_REPOSITORIES_PATH"
+exit="return";if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then exit="exit"; fi
+C=''
+echo $0
+for i in "$@"; do
+        case "$i" in
+            *\'*)
+                i=`printf "%s" "$i" | sed "s/'/'\"'\"'/g"`
+                ;;
+            *) : ;;
+        esac
+        C="$C '$i'"
+        echo $C
+done
+printf "clone %s\n" "$C" |tee >>$DEV_SUITES_PATH/command.log
+declare -a originalParameters
+originalParameters=("$@")
+
+upstream_repository_url="$1"; shift;
+local_repository_name="$1"; shift;
+if [[ "$1" == "no-push" ]]; then upstream_no_push="true"; shift; fi;
+if [[ "$1" == "no-pull" ]]; then upstream_no_pull="true"; shift; fi;
+
+if [[ "$1" == "origin" ]]; then 
+  shift;
+  origin_repository_option="-origin $1"; shift;
+  if [[ "$1" == "no-push" ]]; then origin_no_push="true"; shift; fi;
+  if [[ "$1" == "no-pull" ]]; then origin_no_pull="true"; shift; fi;
+fi 
+declare -A command_line_commit_ish=()
+
+while [[ ! "$1" == "" ]]; do
+    command_line_commit_ish[$1]=$1; shift
+done
+declare -p command_line_commit_ish
+local_repository_dir="$local_repository_name".git
+if [[ ! -e "$local_repository_dir" ]]; then
+  git clone --bare -o  $upstream_repository_url $local_repository_name 
+fi
+cd "$local_repository_dir" 
+mapfile -t existing_branches < <(git branch |sed -e 's/[+*][ ]*//')
+mapfile -t existing_tags < <(git tag)
+mapfile -t worktree_branches < <(git worktree list |sed -e 's/.*[\[]//' -e 's/]//' -e '/.*[\(]bare[)]/d')
+declare -p existing_branches
+declare -p worktree_branches
+declare -p command_line_commit_ish
+
+for branch in ${existing_branches[@]}; do
+echo $branch
+  if ! printf '%s\0' "${worktree_branches[@]}" | grep -Fxqz -- "$branch" \
+  && ! printf '%s\0' "${command_line_commit_ish[@]}" | grep -Fxqz -- "$branch"; then
+      cmd="git branch -d ""$branch"""
+      echo $cmd |tee >>$DEV_SUITES_PATH/command.log
+      $cmd
+  fi
+done
+
+for tag in ${existing_tags[@]}; do
+  if [ ! printf '%s\0' "${command_line_commit_ish[@]}" | grep -Fxqz -- "$tag" ]; then
+      cmd="git tag -d ""$tag"""
+      echo $cmd |tee >>$DEV_SUITES_PATH/command.log
+      $cmd
+  fi
+done

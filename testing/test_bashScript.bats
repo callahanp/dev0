@@ -9,12 +9,12 @@
 
 #bats_require_minimum_version 1.5.0
 setup_file() {
-  DEV_SUITES_DIR=
+  DEV_SUITES_PATH=
 }
 
 
 @test "1. can run our script" {
-    DEV_SUITES_DIR=../test_data
+    DEV_SUITES_PATH=../test_data
     run ../app/bashScript
       i=0
   while [ $i -lt ${#lines[@]} ]; do

@@ -1,0 +1,258 @@
+#!/bin/bash
+i configFile=$1
+originalPWD="$PWD"
+
+declare -ag repositories
+declare -ag worktrees
+declare -ag workspaces
+declare -Ag "resetRepositories"
+declare -Ag configuration
+declare -Ag configured
+
+configured["repositories"]=""
+configured["worktrees]"]
+configured["suites"]=""
+configured["workspaces]""]"
+configured["builds]""]"
+function suite(){
+  echo suite $i
+}
+declare -a commands
+
+function repository(){
+  echo repository $i
+}
+function worktree(){
+  echo worktree $i
+}
+function workspace(){
+  echo workspace $i
+}
+function cmake-build-types(){
+  echo cmake-build-types $i
+}
+function separator(){
+  local separator="------------------------------------------------------------------------"
+  echo "$separator"
+  if [ "$1" == "blank" ]; then
+    echo
+    return
+  fi
+
+  if [ ! -z "$1" ]; then
+    echo "$@"
+    echo "$separator"
+  fi
+}
+function updateRepository(){
+  commands+=("separator Updating $localRepositoryName")
+  cd "$repositoryPath" || exit
+  commands+=("cd $repositoryPath")
+  # update repository:
+  # scan for existing branches and tags
+  # compare existing <commit-ish> and any associateed worktrees to the
+  # configured local and upstream <commit-ish> list
+  # check whether an existing worktree has pending changes
+  #   remove any branches or tags no longer listed in the configuration that
+  #   do not have pending changes.
+  #   Give the user the option of removing obsolete branches and worktrees
+  #   if there are pending changes.
+  #  Add any branches that are not present
+
+function resetRepository() {
+  commands+=("separator Resetting $localRepositoryName")
+  cd "$repositoryPath" || exit
+  commands+=("cd $repositoryPath")
+
+  mapfile existingRemoteName < <(git remote)
+  mapfile existingBranches < <(git branch |sed -e 's/[+*]//')
+  mapfile existingTags < <(git tag |sed -e 's/*//')
+  mapfile existingWorktrees < <(git worktree list |sed -e '/(bare)/d'| sed -e 's/ .*$//')
+
+  for remoteName in "${existingRemoteName[@]}"; do
+   commands+=("git remote remove $remoteName")
+  done
+  for worktree in "${existingWorktrees[@]}"; do
+    commands+=("git worktree remove $worktree")
+  done
+
+  for branch in "${existingBranches[@]}"; do
+    commands+=("git branch -D $branch")
+  done
+
+  for tag in "${existingTags[@]}"; do
+    commands+=("git tag -d $tag")
+  done
+  if [ ! -z "$originURL" ]; then
+    commands+=("git remote add origin $originURL")
+  fi
+  if [ ! -z "$upstreamURL" ]; then
+    commands+=("git  remote add upstream $upstreamURL")
+  fi
+  for branch in "${upstreamBranches[@]}"; do
+    branch=${branch%\n}
+    commands+=("git fetch upstream $branch")
+    commands+=("git branch --track $branch upstream/$branch")
+  done
+}
+# json schema information
+# { "repositories": [],
+#    "worktrees": [],
+#    "wiorkspaces": []
+# }
+for token in "$@"; do
+  tokenProcessed="false";
+  if [[ "$token" == "--reset-repository" ]];   then resetRepositories[$token]=$token; tokenProcessed="true"; fi
+  if [[ "$token" == "--reset-repositories" ]]; then resetRepositories['all']="all";  tokenProcessed="true"; fi
+  if [[ "$tokenProcessed" == "false" && -e "$token" ]]; then configFile="$token"; fi
+done
+if [ -z "$configFile" ]; then
+  configFile="$DEV_DOC_PATH"/dev0Tree/suites/flightgear/project/fg.config.json
+fi
+
+
+
+mapfile -t config < "$configFile"
+
+mapfile -t repositories < <(echo "${config[@]}" | jq -c .repositories[])
+mapfile -t worktrees < <(echo "${config[@]}" | jq -c .worktrees[])
+mapfile -t workspaces < <(echo "${config[@]}" | jq -c .workspaces[])
+
+
+
+if  [[ -n "${dev_debug}" ]]; then
+  echo "${config[@]}"
+  separator
+  declare -p repositories
+  separator
+  declare -p worktrees
+  separator
+  declare -p workspaces
+fi
+declare -A upstream_branches
+declare -A upstream_tags
+declare -A gitCommits
+
+## operations on repositories:
+
+## - Save upstream_branches, upstream_tags & gitCommits for each repository
+## - check existence of localRepositoryName.git
+## - list worktrees
+## - list remotes
+## - check origin no-push
+## - check upstream no-push
+## - remove all tags and branches not listed as keep
+## - make sure branches in upstream listed as keep are remote tracking branches on the local clone
+separator "Repositories"
+for repository in "${repositories[@]}"; do
+
+  localRepositoryName=$(echo "$repository"|jq -r '.local_repository_name'|sed -e 's/null//')
+  originURL=$(echo "$repository"          |jq -r '.origin_url'|sed -e 's/null//')
+  originPush=$(echo "$repository"         |jq -r '.origin_push'|sed -e 's/null//')
+  mapfile upstreamURL < <(echo "$repository"        |jq -r '.upstream_url'        | sed -e 's/null//')
+  mapfile upstreamPush < <(echo "$repository"       |jq -r '.upstream_push'       | sed -e 's/null//')
+  mapfile upstreamBranches < <(echo "$repository"   |jq -r '.upstream_branches[]' | sed -e 's/null//')
+  mapfile localBranches < <(echo "$repository"      |jq -r '.local_branches[]'    | sed -e 's/null//')
+  mapfile upstreamTags < <(echo "$repository"       |jq -r '.upstream_tags[]'     | sed -e 's/null//')
+  mapfile keepCommitId < <(echo "$repository"      |jq -r '.gitCommits[]'    | sed -e 's/null//')
+
+  separator;separator; echo ""; separator Processing Repository: "$localRepositoryName";
+
+  repositoryPath="$DEV_REPOSITORIES_PATH"/"$localRepositoryName".git
+  if  [ -z "${dev_debug}" ]; then
+    echo
+    echo Repository "$repository"
+    echo localRepositoryName: "$localRepositoryName"
+    echo "repositoryPath: $repositoryPath"
+    echo "originURL:      $originURL"
+    echo "originPush:     $originPush"
+    echo "upstreamURL:    ${upstreamURL[*]}"
+    echo "upstreamPush:   $upstreamPush"
+    echo "upstreamBranches:  ${upstreamBranches[*]}"
+    echo "upstreamTags:      $upstreamTags"
+    echo "keepCommitIds:  ${keepCommitIds[*]}"
+  fi
+  echo "${#worktrees[@]} Worktrees"
+  # if [ "$upstreamBranches" ]; then
+  #   upstream_branches[$localRepositoryName]="$upstreamBranches"
+  # fi
+  # if [ "$upstreamTags" ]; then
+  #   upstream_tags[$localRepositoryName]="$upstreamTags"
+  # fi
+  # if [ "$keepCommitIds" ]; then
+  #   gitCommits[$localRepositoryName]="$keepCommitIds"
+  # fi
+  if [[ -e "$repositoryPath" ]]; then
+    commands+=("echo Repository $localRepositoryName found at $repositoryPath" )
+    if [[ "${resetRepositories['all']}" == "all" \
+           || "${resetRepositories[$localRepositoryName]}" == "$localRepositoryName"  ]];then
+      resetRepository "$localRepositoryName"
+    fi
+
+  else
+    cloneURL="${originURL:-${upstreamURL}}"
+
+    commands+=("echo Repository $localRepositoryName not found at $repositoryPath")
+    commands+=("cd $DEV_REPOSITORIES_PATH " )
+    commands+=("git clone --bare  $cloneURL $localRepositoryName")
+    commands+=("cd $originalPWD" )
+
+    resetRepository "$localRepositoryName"
+  fi
+done
+
+declare -p worktrees
+## operations for worktrees
+## determine if worktree exists
+## create worktree for existing branch
+## create worktree for new branch
+## create an updateWorktree script for the worktree
+## run the update
+# git worktree add <path> creates a new branch whose name is the final component of <path>
+# git worktree add <path> [<commit-ish>] would allow a different final component of <path>
+# do not do that.
+
+# git worktree add $force=-f $detach="--detach" $orphan="--orphan"$worktree-path
+for worktree in "${worktrees[@]}"; do
+  localRepositoryName=$(echo "$worktree"|jq -r '.local_repository_name'|sed -e 's/null//')
+  mapfile branches < <(echo "$worktree" |jq -r '.branches[]'|tr "\n" " "|sed -e 's/null//')
+  basedOn=$(echo "$worktree"            |jq -r '.based_on'|sed -e 's/null//')
+  update=$(echo "$worktree"             |jq -r '.update'|sed -e 's/null//')
+  if  [[ ! -z "$dev_debug" ]]; then
+    echo
+    echo Worktree "$worktree"
+    echo "localRepositoryName:  $localRepositoryName"
+    echo "branches:             $branches"
+    echo "basedOn:              $basedOn"
+    echo "update:               $update"
+  fi
+done
+exit
+for (( i=0; i<${#commands[@]}; i++ )); do
+   command="${commands[i]}"
+  echo "$command"
+  $command
+done
+
+## create a vscode code-workspace file for the workspace
+## create build directories for the combination of workspace,  cmakeBuildTypes and features
+
+for workspace in "${workspaces[@]}"; do
+  suiteName=$(echo       "$workspace" |jq -r '.suite_name'|sed -e 's/null//');
+  workspaceName=$(echo   "$workspace" |jq -r '.workspace_name'|sed -e 's/null//');
+  workspaceTrees=$(echo  "$workspace" |jq -r '.worktrees[]'|tr "\n" " "|sed -e 's/null//');
+  cMakeBuildTypes=$(echo "$workspace" |jq -r '.cmake_build_types[]'|tr "\n" " "|sed -e 's/null//');
+  if [ "$upstreamBranches" ]; then
+  echo
+  echo  Workspace "$workspace"
+  echo "suiteName:       $suiteName"
+  echo "workspaceName:   $workspaceName"
+  echo "workspaceTrees:  $workspaceTrees"
+  echo "cMakeBuildTypes: $cMakeBuildTypes"fi
+  fi
+done
+
+for (( i=0; i<${#command[@]}; i++ )); do
+  echo "${command[i]}"
+done
+set +x

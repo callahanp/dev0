@@ -1,0 +1,91 @@
+{ "suite_name": "fg",
+ "repositories": [
+    { "local_repository_name": "flightgear",
+      "origin_url": "https://gitlab.com/callahanp/flightgear",
+      "upstream_url": "https://gitlab.com/flightgear/flightgear",
+      "upstream_push": "no_push",
+      "upstream_branches": [ "next", "release/2024.1", "release/2020.3", "release/2018.1"],
+      "upstream_tags": [ ],
+      "local_branches": [],
+      "git_commits": [ ]
+    },
+    { "local_repository_name": "simgear",
+      "origin_url": "https://gitlab.com/callahanp/",
+      "upstream_url": "https://gitlab.com/flightgear/simgear",
+      "upstream_push": "no_push",
+      "upstream_branches": [ "next", "release/2024.1", "release/2020.3", "release/2018.1"],
+      "upstream_tags": [ "none" ],
+      "local_branches": [],
+      "git_commits": [ ]
+    },
+    { "local_repository_name": "fgmeta",
+      "origin_url": "git://callahanpa@git.code.sf.net/u/callahanpa/fgmeta",
+      "upstream_url": "https://gitlab.com/flightgear/fgmeta.git",
+      "upstream_push": "no_push",
+      "origin_branches": [ "next", "release/2024.1", "release/2020.3", "release/2018.1"],
+      "origin_tags": [ ],
+      "upstream_branches": [ "next", "release/2024.1", "release/2020.3", "release/2018.1"],
+      "upstream_tags": [ ],
+      "local_branches": [],
+      "git_commits": [ ]
+    },
+    { "local_repository_name": "fg-osg",
+      "upstream_url": "https://gitlab.com/flightgear/openscenegraph.git",
+      "upstream_push": "no_push",
+      "origin_branches": [ "fgfs-osg-36-2", " OpenSceneGraph-3.6", "OpenSceneGraph-3.4" ],
+      "origin_tags": [ ],
+      "upstream_branches": [ "fgfs-osg-36-2", "OpenSceneGraph-3.6", "OpenSceneGraph-3.4" ],
+      "upstream_tags": [ ],
+      "git_commits": [ ]
+    }
+  ],
+
+ "worktrees": [
+  { "local_repository_name": "flightgear",
+    "branches": [ { "remote": "upstream", "branch_names":[ "upstream_branches" ], "update": "git pull --rebase" },
+                  { "remote": "origin", "branch_names": [ "tickets2890" ] , "based_on": "upstream/next", "update": "git rebase upstream/next" } ]
+  },
+  { "local_repository_name": "simgear",
+    "branches": [ { "remote": "upstream", "branch_names":[ "upstream_branches" ], "update": "git pull --rebase" } ]
+  },
+  { "local_repository_name": "fgmeta",
+    "branches": [ { "remote": "upstream", "branch_names":[ "upstream_branches" ], "update": "git pull --rebase" } ]
+  },
+  { "local_repository_name": "openscenegraph",
+    "branches": [ { "remote": "upstream", "branch_names":[ "upstream_branches" ], "update": "git pull --rebase" } ]
+  } ],
+"workspaces": [
+  { "suite_name": "fg",
+    "workspace_name": "next",
+    "worktrees": [ "flightgear.next", "simgear.next", "fgmeta.next", "openscenegraph.fgfs-sog-36-2" ],
+    "cmake_build_types": [ "d", "rd", "r", "m" ],
+    "value_sets": []
+  },
+  { "suite_name": "fg",
+    "workspace_name": "latest",
+    "worktrees": [ "flightgear.release/2024.1", "simgear.release/2024.1", "fgmeta.next", "openscenegraph.fgfs-sog-36-2" ],
+    "cmake_build_types": [ "d", "rd", "r", "m" ],
+    "value_sets": []
+  },
+  { "suite_name": "fg",
+    "workspace_name": "lts",
+    "worktrees": [ "flightgear.release/2020.3", "simgear.release/2020.3", "fgmeta.next", "openscenegraph.fgfs-sog-36-2" ],
+    "cmake_build_types": [ "d", "rd" ],
+    "value_sets": []
+  },
+  { "suite_name": "fg",
+    "workspace_name": "old_lts",
+    "worktrees": [ "flightgear.release/2018.1", "simgear.release/2018.1", "fgmeta.next", "openscenegraph.fgfs-sog-36-2" ],
+    "cmake_build_types": [ "d", "rd" ],
+    "value_sets": []
+  },
+  { "suite_name": "fg",
+    "workspace_name": "tickets__2890",
+    "worktrees": [ "flightgear.tickets/2890", "simgear.next", "fgmeta.next", "openscenegraph.fgfs-sog-36-2" ],
+    "cmake_build_types": [ "d", "rd", "r", "m" ],
+    "value_sets": []
+  }
+  ],
+  "value_sets": []
+}
+

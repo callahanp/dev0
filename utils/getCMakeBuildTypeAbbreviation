@@ -1,0 +1,13 @@
+#!/bin/bash
+#  SPDX-FileName: addSuite
+#  SPDX-FileComment: Creates a new suite; optionally opens code at suite level
+#  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
+#  SPDX-License-Identifier: GPL-2.0-or-later
+
+#  source "$DEV_COMMANDS_PATH/"cMakeBuildType/getCMakeBuildTypeAbbreviation
+declare -A cMakeBuildTypeAbbreviations=(
+["Debug"]="d"
+["Release"]="r"
+["RelWithDebInfo"]="rd"
+["MinSizeRel"]="m" )
+cMakeBuildTypeAbbreviation=${cMakeBuildTypeAbbreviations[$1]}

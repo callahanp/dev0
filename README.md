@@ -1,245 +1,170 @@
 # DEV0 - A simple development environment
 
+README.md
+
 ## Overview
 
-Dev0 provides a common structure and workflow for the most common developer tasks when creating or maintaining applications. Its purpose is to manage build scenarios seamlessly so a developer can instantly switch to a different one. Dev0 does not provide a complete development environment.  Its purpose is to provide an interface to developers' daily tasks using scripts you probably already have or can easily write
+Dev0 provides a common structure and workflow for the most common developer tasks
+when creating or maintaining applications. Its purpose is to manage source materials
+seamlessly so a developer can instantly switch between tasks.
 
-Dev0 supports
+Dev0 supports development in simple situations with one cloned repository
+to large application suites with multiple executables, repositories,
+libraries, and tools.
 
-- Multiple Standalone Applications with a single cloned repository
-- Multiple Application Suites with numerous components
-- Clones of multiple application, library, and toolchain repositories
-- Official repositories and personal forks of multiple individuals
+## Dev0 Features
 
-The workflow supported by DEV0 is based on the workspace concept.  Workspaces support activities with specific objectives that require changes to code. A workspace holds  everything you need to accomplish any specific objective related to your codebase.  Some workspaces used for exploration might be throwaways. Others will result in changes pushed to a personal fork, where a merge request with upstream can be created. Some workspaces might be used to coordinate work with other developers.
+- Maintains a set of git repositories and worktrees
+- Produces builds with choices of
+  - CMake Build Types
+  - Build Features
+  - Supporting Libraries
+- Runs Executables with sets of Environment Variables, Command Line Options and Parameters
+- Generated VSCode workspace and launch configurations
+- Updates repositories and worktrees with pull or rebase
+- Easily change context between applications or branches
+-
+## Dev0 Concepts
 
-You might need separate workspaces for activities like these:
+- Suites of Related Applications, Libraries or Tools
+- Repository Hosts (Gitlab, Github, SourceForge and Local)
+- Repository Providers (Hosted and Local)
+- Remotes: Official Repositories and Forks
+- Branch, Tag or Commit
+- Updating Local Branches from Remotes
+- Worktrees (Git Clones and Bare Clones)
+- Workspace (VSCode Editing, Building and Running Executables)
+- Setting Sets (Environment Variables, Command Line Options and Parameters)
+- Flexible Configuration
 
-- Developing information related to a bug or proposed feature
-- Making changes on for a new or updated feature or fix
-- Sharing changes with others working on the same feature or fix
-- Building or executing a specific branch, tag or commit
-- Developing a CI solution that works for multiple branches, tags and commits
+Dev0 is currently based on git and VisualStudioCode, but can be adapted to use SVN  and any other IDE.
 
+## Dev0 core elements
 
-- setup Application or Application Suite
-- setup individual working environments for specific build scenarios related to releases, maintenance, refactoring, bug fixing etc.
-- edit & run under debug in VSCode
-- scripted build using any build technology, including the Gnu Toolchain, CMake, and Ninja Build.
-- multiple build types including Debug, RelWithDebInfo, Release and MinSizeRel
-- scripted run for executables from any build scenario.
+***
+**Repository:**
+: An "official" git repository stored on one of Sourceforge, GitLab, GitHub, or locally
 
-## A Real-World Example
+**Fork**
+: A bare git copy of an official repository stored on Sourceforge, GitLab, or GitHub under a user's account
+***
+**Directory names**
+: Directory names in Dev0 are formed from combinations of names: suite, clone, CMake Build Type, or Git Branch, tag or commit-id.  Special characters are limited to hyphens and periods.  Periods are used in place of / to keep the directory hierarchy as flat as possible. Hyphens are kept when creating worktrees from another user's fork.  Othewise they are avoided.
+***
+**Suite**
 
-I want to work on changes for tickets/4890, tickets/4887 and "main" at the same time.
+A suite is any set of software you want to work on as a unit.  A suite can have one or more repositories.
 
-- There are three repositories: App, AppLib and OtherLib
-- Any build uses all three
-- There are some circumstances where the system's installed OtherLib is needed and others where a customized branch of the OtherLib repository from our fork is appropriate.
-- There are circumstances where an un-released version of a toolchain item is needed. (In our situation it was CMake for about six months.  We're back on the released version)
+Suite names are lower case and contain no special characters.  Short abbreviations are recommended.
 
-- Debug, Release, RelWithDebInfo, and MinSizeRel versions as needed
+Directory: **$DEV0_SUITES_PATH**
+***
+**Project**
+: A directory for storing materials supporting the use of Dev0 for a suite
 
-- Tickets/4890 is a branch on one repository: App
-- Tickets/4887 is a branch on two repositories: App and AppLib
-- OtherBranch is our branch on a fork of OtherLib; OtherLib's latest release is installed system-wide.
+The project directory contains contains DEV0 configuration files and build scripts.
 
-- I keep App and AppLib's  main branch updated from upstream and push the changes to my forks
-- Other members of my team maintain a specialized branch on a fork of OtherLib
-- I am doing the initial work on 4890 and final testing on 4887.
-- I build Debug, Release, RelWithDebInfo, and MinSizeRel versions with either the system's OtherLib or a build of the customized branch of OtherLib.
+Directory: **\$DEV0\_SUITES\_PATH/\$suiteName/project**
+***
+**Clone**
+:Bare clones of repositories or forks stored locally.
 
-Does that sound like a lot?  It is. And Dev0 helps manage the situation. Dev0 commands switch between build scenarios without using git stash. A terse entry is made on the command line, and the switch is done.
+Clones of official repositories are created using -origin=upstream.  Forks are treated as remotes and are not usually needed as separate clones.
 
-## DEV0 - Namespace
+Directory: **\$DEV0\_CLONES\_PATH**
 
-Because Dev0 uses an unordered parameter scheme, names of suites, repositories, branches, tags, commits,  worktrees, IDE workspaces,
-builds and build types must either be unique, or must be specified using a option flag.
+**origin**
+: in a clone, a git remote pointing to your personal fork.  Forks of other users may also be added as git remotes with any name you choose, customarily username-reponame
 
- Each command will attempt to interpret parameters not preceded by an option flag.  If the type of parameter cannot be determined, uniquely, the command will respond with an error message indicating which value must have an option flag.
+**upstream**
+: in a clone, a git remote pointing to an official repository
 
-- -s --suite
-- -r --repository
-- -b --branch
-- -t --tag
-- -c --commit
-- -wt --worktree
-- -ws --workspace
-- -B  --build
-- --cmake-build-type
+***
+**commit-ish or \$commitIsh**
+: a git branch, tag or commit-id
+***
+**Worktree**
+: A directory containing a git worktree specific to a branch, tag or commit
 
-## DEV0 - Types of Commands
+Directory: **\$DEV0\_WORKTREES\_PATH**
 
-- Add/Remove
-- Native
-- Project
+***
 
-### Add/Remove Commands
+**Workspace**
+: A directory for working with a specific set of one or more worktrees
 
-Add Remove commands are used to maintain the directory structure symbolic links and IDE files making up an application or suite under Dev0
+Directory **\$DEV0\_SUITES\_PATH\/$suiteName\/workspace.\$commitIsh**
+***
 
-The basic procedure is:
+**Build** 
+: a Directory within a workspace for building with a specific set of one or more worktrees and a single named Build Type
 
-- create a new suite with dev0 add suite
-- add repositories with   dev0 add repository
-- add worktrees with      dev0 add worktree or dev0 add build-worktree
-- dev0 add|remove suite|repository|worktree|build|build-worktree|VSCode-workspace
-- dev0  a |  r      s  |    r     |   w        b       bw            ws
+**Build Type**
+: A named set of characteristics or parameter values that differentiate builds based on the same worktrees, using different combinations of parameters. 
 
-Legend:
+The content of the parameters depends on the needs of your build script in the 
 
-- repo-name: two-part name  owner-component: eg, callahanp-simgear (a fork of flightgear-simgear)
-- repo-folder: repo-name.git
-- git-reference-id: git reference with "/" translated to "."
-- build-id:  git-reference-id.cmake-build-type
-- worktree-id: repo-name.git-reference-id in other words owner-component.git-reference
-- code-workspace-id: git-reference-id | $suiteName.git-reference-id |anything-else
-- code-workspace: code-workspace-id.code-workspace
-- workspace: code-workspace
-- worktree-symlink-name: component (part of repo-name)|something else needed by your build and run scripts
+Directory: **\$DEV0\_SUITES\_PATH\/$suiteName\/build.\$commitIsh**
+***
 
-Forms:
+**.bashrc**
+: a good place to define the environment variables Dev0 uses and to call devrc
 
-    dev0 add suite $suiteName
-    dev0 add repository git-url (upstream-git-URL) local-git-repo-name
-    dev0 add worktree local-repo-name new-branch| detach git-reference pull|rebase
-    dev0 add build build-id (worktree-symlink-name)
-    dev0 add build build-id worktree-id (worktree-symlink-name)
-    dev0 add VsCode-workspace code-workspace-id worktree-id \[ worktree-id\]...
-    dev0 remove suite fg
-    dev0 remove repository local-git-repo-name
-    dev0 remove worktree local-repo-name.git-reference
-    dev0 remove build build-id \[worktree-symlink-name\]
-    dev0 remove build build-id \[worktree-id\] | \[worktree-symlink-name\]
-    dev0 remove VsCode-workspace code-workspace-id  \[ worktree-id\]...
-    dev0 update worktree-id
+- DEV0_INSTALL_PATH=
+- DEV0_SUITES_PATH=
+- DEV0_CLONES_PATH=
+- DEV0_WORKTREES_PATH=
+- $DEV0_INSTALL_PATH/devrc
+***
+***
+# Dev0 working commands
 
-## DEV0/Native Commands
+**ide or i**
 
-- i | ide $suiteName git-reference
-- b | build $suiteName git-reference cmake-build-type
-- r | run $suiteName git-reference cmake-build-type
+Start default ide with $suiteName and $workspaceName
 
-Dev0-Native command ide will start visual studio code by default.  Dev0-project ide commands are not supported.
-Dev0-Native build and run commands establish the context of the build or run and then call DEV0-Project commands, which are found in the application's project directory.  The user-written DEV0-Project commands build and run may be written to do a build or to pass call another script to do the build.
+i [suite-name] [workspace-name]
 
-Substitution: cmake build types Debug, RelWithDebInfo, Release, and MinSizeRel can be abbreviated as d rd r and m. The full name can be provided as lowercase, and the correct mixed case value will be substituted.
+**build or b**
+: run build script found in the project directory 
 
-Persistence:  if any of the commands are given argument values, the values are saved
-for use when a command is given without parameters.  The values are stored, $suiteName in $DEV_SUITES_DIR and git-reference and cmake-build-type in $DEV_SUITES_DIR/$suiteName.
+b [suite-name] [workspace-name] [cmakeBuildType] [build-type]
 
-Brevity:
+**run or r**
+: execute the run script in thye project directory with $suiteName and $workspaceName and $buildType
+r [suite-name] [workspace-name] [cmake-build-type] [build-parameter-set-name] [run-parameter-set-name]
 
-- Frequently used commands can be aliased to a single letter if desired. Dev0 does this for editing, building and running executables
-- Context information, suite, git-reference and cMakeBuildType are saved and will be used if a command is entered without them.
+Parameters for ide, build and run are optional once used in a suite.  
+Special value: "none" can be used for [buld-parameter-set-name] and [run-parameter-set-name] ls
 
-Parameter Pass Through:
+- if a suitename is a parameter is not given and the current path includes a suite, that suite will be used.  If not, the previous suite used for the command will be used provided it has been set.
+- if a workspace name  or build type is not given, the previous value for the suite will be used if it has been set.
 
-- DEV0/native commands process command-line parameters to the end of the command line or the first --
-- All parameters are passed to DEV0-Project scripts regardless of --
-- A Dev0/Application interface script such as run or build may use anything the Dev/Native script passed to it via environment variables, parameters or the setting of the current directory
+## dev0 maintenance commands
 
-Limitation: the sets of suite names and git-reference names must be chosen so they do not overlap.
+**clone \<repository-url> \<local-repository-name> [origin origin-url] \<commit-ish...>**
 
-Having a suite name the same as a git-reference name would cause problems.
+- Create a bare clone a specific repository from SourceForge, GitHub or GitLab as upstream
+- Retain only specified branches and tags
+- Optionally set origin to a SourceForge, Github or Gitlab personal fork. 
+  
+Worktrees are created for the retained branches and tags, and for any specified individual commits.
 
-## Environment Variables and devrc
+**worktree \<local-repository-name,commit-ish>...**
 
-in ~/bashrc, add definitions for
+create a git worktree from a repository for a branch, tag or commit 
 
-- DEV_SUITES_DIR=/work/suites a directory named suites, placed
-wherever you will have space for the repositories, worktrees and sources,
-builds and data you will be working with. (think big)
-- DEV_APP_DIR= the app folder in DEV0
-elements
-- $DEV_APP_DIR/devrc # execute the dev rc file to define aliases for ide, build and run
+**workspace \<workspace-name> [\<clone-name | clone-name,commit-ish>]...**
 
-## DEV0 Directories
+Create a workspace for specific combinations of worktrees
 
-To make things regular between projects, DEV0 enforces a set of directory names for common development artifacts: repositories, worktrees, builds etc.
+- suitable workspace names include git branch names, git tag names, git commit id's and other words.
+- note that there can be only one worktree per branch, tag or commit id, but many workspaces can use the worktree.
+  
+**buildParameterSet [\<workspace-name>] \<build-parameter>...**
 
-### directory: $DEV_SUITES_DIR/$suiteName
+The buildParameterSet command is only needed if additional parameters beyond the CmakeBuildType are required for special builds.
 
-Suites are composed of one or more related applications,
-libraries plug-ins, or other material, commonly built as a group
-or used together.
+The buildParameterSet command creates a file in the project directory containing a named set of parameters used for builds.  When build is run and the command names a buildParameterSet, these parameters will be forwarded to project's build script.
 
-Examples include
-
-- Flightgear with it's related project simgear and a specific
-  version of one of the libraries it uses.
-- LibreOffice with its various components would be another.
-
-Each of the directories below is in $DEV_SUITES_DIR/$suiteName/
-
-### directory: $DEV_SUITES_DIR/$suiteName/project
-
-Dev0's development model does not take full charge of your builds.  It merely sets several
-variables you can use in your own build and run scripts, called by the build and run scripts in DEV0
-
-These bash variables are:
-
-- $suite
-- $gitReference
-- $cMakeBuildType
-
-You are required to provide two
-scripts that set the stage for using your usual build and run scripts and then call them.
-Your version of project/run and project/build should use the values of $suite, $gitReference and $cMakeBuildType to ensure that the desired build directory is used to build in, or to run.
-What is built and how it is done is up to you.
-
-### directory: $DEV_SUITES_DIR/repositories
-
-Bare git clones of upstream a forks from GitHub, GitLab,
-SourceForge or local bare repositories for new suites of applications.
-
-Only Git repositories are supported at this time.
-
-### directory: $DEV_SUITES_DIR/worktrees
-
-Git worktrees for specific git references: branches, tags or specific commits.
-
-### directory: $DEV_SUITES_DIR/$suiteName/builds
-
-/builds contains a directory of builds for specific git-references and Cmake Build Types.
-The names of the directories have a specific format:
-
-- git-reference.cmake-build-type
-
-Each one contains symbolic links to actual worktrees needed for the build.  DEV0 assumes the cmake build and install directories are in the same directory alongside the links to the source trees.
-in addition, DEV0 places a builds ld directory.
-
-Here's a typical example with a bit of complexity.
-
-    builds
-    ├── next.Release
-    │   ├── fgmeta -> /work/suites/fg/worktrees/flightgear-fgmeta.next
-    │   ├── flightgear -> /work/suites/fg/worktrees/flightgear-flightgear.next
-    │   └── simgear -> /work/suites/fg/worktrees/flightgear-simgear.next
-    │   ├── build
-    │   ├── install
-    │   │   ├── flightgear
-    │   │       └── fgdata ->/work/suites/fg/worktrees/flightgear-fgdata.next
-    ├── tickets.2895.Debug
-    │   ├── fgmeta -> /work/suites/fg/worktrees/callahanpa-fgmeta.tickets.2895
-    │   ├── flightgear -> /work/suites/fg/worktrees/flightgear-flightgear.next
-    │   ├── simgear -> /work/suites/fg/worktrees/flightgear-simgear.next
-    │   ├── build
-    │   │   ├── flightgear
-    |   |       └── ... (build files)
-    │   │   └── simgear
-    |   |       └── ... (build files)
-    │   ├── install
-    │   │   ├── flightgear
-    │   │       └── fgdata ->/work/suites/fg/worktrees/flightgear-fgdata.next
-    |   |    (additional files and directories required for run are either
-    |   |     in place here, or are created by the build process)
-    ├── tickets.2895.Release
-    │   ├── ...
-
-### directory: $DEV_SUITES_DIR/$suiteName/edits
-
-- anything necessary to start VSCode or another editor.
-
-For vscode, this is a set of multi root .code-workspace files, one per git-reference
-and optionally others for special situations.
+**runParameterSet [\<workspace-name>] \<run-parameter-set-name>...**

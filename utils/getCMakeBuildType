@@ -4,8 +4,8 @@
 #  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
 #  SPDX-License-Identifier: GPL-2.0-or-later
 
-# source $DEV_APP_DIR/CMakeBuildType
-# source $DEV_APP_DIR/CMakeBuildType "invalid"
+# source $DEV_APP_PATH/CMakeBuildType
+# source $DEV_APP_PATH/CMakeBuildType "invalid"
 # if called does nothing but set the "previous" CmakeBuildType
 declare -g suite
 declare -g cMakeBuildType=""
@@ -24,6 +24,5 @@ for arg in "$@"; do
   fi
 done
 if [[ $suite != "" ]]; then
-  echo "$cMakeBuildType" >"$DEV_SUITES_DIR"/"$suite"/project/cMakeBuildType
+  echo "$cMakeBuildType" >"$DEV_SUITES_PATH"/"$suite"/project/cMakeBuildType
 fi
-set +x

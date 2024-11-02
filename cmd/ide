@@ -1,0 +1,47 @@
+#!/bin/bash
+#  SPDX-FileName: dev0/app/ide
+#  SPDX-FileComment:User by run and build commands
+#  SPDX-FileCopyrightText: Copyright (C) 2024 Patrick Callahan
+#  SPDX-License-Identifier: GPL-2.0-or-later
+
+# shellcheck disable=SC1091
+#set -x
+declare  exit
+declare -g exit
+declare -g suiteName
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  exit="exit"
+else
+  exit="return"
+fi
+declare -g suiteName
+if [ "$DEV_DEBUG" ]; then echo ide: source "$DEV_COMMANDS_PATH"/suite "$1" ; fi
+source "$DEV_COMMANDS_PATH"/suite "$1"
+if [[ "$suiteName" == "$1" ]]; then shift; fi;
+declare projectPath
+declare -a codeWorkspacePathExact
+declare -a codeWorkspacePathWildcard
+unset codeWorkspacePath
+shopt -s nullglob
+projectPath="$DEV_SUITES_PATH"/"$suiteName"/project
+workspacePathPrefix="$DEV_SUITES_PATH"/"$suiteName"/workspace
+codeWorkspacePathExact=("$workspacePathPrefix"."$1"/"$suiteName"."$1".code-workspace)
+codeWorkspacePathWildcard=("$workspacePathPrefix".*"$1"*/"$suiteName".*"$1"*.code-workspace)
+
+if [[ ${#codeWorkspacePathExact[@]} -eq 1 && -e  ${codeWorkspacePathExact[0]} ]]; then
+  codeWorkspacePath=${codeWorkspacePathExact[0]}
+elif
+[[ ${#codeWorkspacePathWildcard[@]} -eq 1 && -e  ${codeWorkspacePathWildcard[0]} ]]; then
+  codeWorkspacePath=${codeWorkspacePathWildcard[0]}
+fi
+if [ -z "$1" ]; then echo "Error: No git reference given."; $exit 1; fi
+if [ "$codeWorkspacePath" ]; then
+  echo "  cd $projectPath"
+  cd "$projectPath" ||{ echo "can''t find $projectPath"; return;}
+  echo "  code ""${codeWorkspacePath}"
+  code "${codeWorkspacePath}"
+elif [[ ${#codeWorkspacePathWildcard[@]} -gt 1   && -e $projectPath ]]; then
+        echo  "  ${codeWorkspacePathWildcard[*]}"
+        echo "be more specific than $1"
+        $exit 1
+fi
