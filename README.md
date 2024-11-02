@@ -50,6 +50,20 @@ Dev0 is currently based on git and VisualStudioCode, but can be adapted to use S
 ***
 **Directory names**
 : Directory names in Dev0 are formed from combinations of names: suite, clone, CMake Build Type, or Git Branch, tag or commit-id.  Special characters are limited to hyphens and periods.  Periods are used in place of / to keep the directory hierarchy as flat as possible. Hyphens are kept when creating worktrees from another user's fork.  Othewise they are avoided.
+
+Several environment variables are required for DEV0 in .bashrc 
+
+examples:
+
+- $DEV_SUITES_PATH/<suite-name>
+- $DEV_REPOSITORIES_PATH/dev0.git
+- $DEV_WORKTREES_PATH/dev0.next
+
+- $DEV_SUITES_PATH/<suite-name>/project
+- $DEV_SUITES_PATH/<suite-name>/workspace.next
+- $DEV_SUITES_PATH/<suite-name>/workspace.<branch-name>
+- $DEV_SUITES_PATH/<suite-name>/workspace.<branch-name>/build.<cmakeBuildType>.<build-parameter-set-name>
+- 
 ***
 **Suite**
 
