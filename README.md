@@ -55,14 +55,14 @@ Several environment variables are required for DEV0 in .bashrc
 
 examples:
 
-- $DEV_SUITES_PATH/<suite-name>
+- $DEV_SUITES_PATH/\<suite-name>
 - $DEV_REPOSITORIES_PATH/dev0.git
 - $DEV_WORKTREES_PATH/dev0.next
 
-- $DEV_SUITES_PATH/<suite-name>/project
-- $DEV_SUITES_PATH/<suite-name>/workspace.next
-- $DEV_SUITES_PATH/<suite-name>/workspace.<branch-name>
-- $DEV_SUITES_PATH/<suite-name>/workspace.<branch-name>/build.<cmakeBuildType>.<build-parameter-set-name>
+- $DEV_SUITES_PATH/\<suite-name>/project
+- $DEV_SUITES_PATH/\<suite-name>/workspace.next
+- $DEV_SUITES_PATH/\<suite-name>/workspace.\<branch-name>
+- $DEV_SUITES_PATH/\<suite-name>/workspace.\<branch-name>/build.\<cmakeBuildType>.\<build-parameter-set-name>
 - 
 ***
 **Suite**
