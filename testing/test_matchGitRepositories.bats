@@ -33,10 +33,10 @@ Fake=""
   done
   echo "# output: $output" >&3
           [ ${#lines[@]} -eq 4 ]
-    [ "${lines[0]}" == "../test_data/wwww/repositories/wwww.git" ]
-    [ "${lines[1]}" == "../test_data/wxyz/repositories/wxyz.git" ]
-    [ "${lines[2]}" == "../test_data/wxyz/repositories/yyyy.git" ]
-    [ "${lines[3]}" == "../test_data/yyyy/repositories/yyyy.git" ]
+    [ "${lines[0]}" == "../test_data/wwww/clones/wwww.git" ]
+    [ "${lines[1]}" == "../test_data/wxyz/clones/wxyz.git" ]
+    [ "${lines[2]}" == "../test_data/wxyz/clones/yyyy.git" ]
+    [ "${lines[3]}" == "../test_data/yyyy/clones/yyyy.git" ]
 }
 
 
@@ -52,8 +52,8 @@ Fake=""
   done
   echo "# output: $output" >&3
         [ ${#lines[@]} -eq 2 ]
-        [ "${lines[0]}" == "../test_data/wxyz/repositories/wxyz.git" ]
-        [ "${lines[1]}" == "../test_data/wxyz/repositories/yyyy.git" ]
+        [ "${lines[0]}" == "../test_data/wxyz/clones/wxyz.git" ]
+        [ "${lines[1]}" == "../test_data/wxyz/clones/yyyy.git" ]
 }
 @test "4. Run With Suite Abbreviation  x " {
     export DEV_SUITES_PATH=../test_data
@@ -66,8 +66,8 @@ Fake=""
   done
   echo "# output: $output" >&3
         [ ${#lines[@]} -eq 2 ]
-        [ "${lines[0]}" == "../test_data/wxyz/repositories/wxyz.git" ]
-        [ "${lines[1]}" == "../test_data/wxyz/repositories/yyyy.git" ]
+        [ "${lines[0]}" == "../test_data/wxyz/clones/wxyz.git" ]
+        [ "${lines[1]}" == "../test_data/wxyz/clones/yyyy.git" ]
 
 }
 @test "5. Run With Suite Abbreviation  wxyz " {
@@ -79,8 +79,8 @@ Fake=""
     ((i=i+1))
   done
   echo "# output: $output" >&3
-        [ "${lines[0]}" == "../test_data/wxyz/repositories/wxyz.git" ]
-        [ "${lines[1]}" == "../test_data/wxyz/repositories/yyyy.git" ]
+        [ "${lines[0]}" == "../test_data/wxyz/clones/wxyz.git" ]
+        [ "${lines[1]}" == "../test_data/wxyz/clones/yyyy.git" ]
 
 }
 @test "6. Run With Unknown Suite Abbreviation  zzzz " {
@@ -108,7 +108,7 @@ Fake=""
   done
   echo "# output: $output" >&3
      [ ${#lines[@]} -eq 1 ]
-        [ "${lines[0]}" == "../test_data/wxyz/repositories/yyyy.git" ]
+        [ "${lines[0]}" == "../test_data/wxyz/clones/yyyy.git" ]
 }
 
 
@@ -137,6 +137,6 @@ Fake=""
   echo "# output: $output" >&3
 
      [ ${#lines[@]} -eq 2 ]
-     [ "${lines[0]}" == "../test_data/wxyz/repositories/yyyy.git" ]
-     [ "${lines[1]}" == "../test_data/yyyy/repositories/yyyy.git" ]
+     [ "${lines[0]}" == "../test_data/wxyz/clones/yyyy.git" ]
+     [ "${lines[1]}" == "../test_data/yyyy/clones/yyyy.git" ]
 }

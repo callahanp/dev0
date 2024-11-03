@@ -23,7 +23,7 @@ for suite in  wwww wxyz yyyy; do
     mkdir -p  "${testDataHome}"/"${suite}"/edit
     cd "${testDataHome}"/"${suite}"/repositories ||{ echo "Cant Find ${testDataHome} /wwww/repositories???" exit 1;}
     git clone --bare  "${testDataHome}"/tiny.git "${suite}".git
-    cd "${suite}".git || { echo "Cant Find ${testDataHome} /wwww/repositories/"$suite".git"; exit 1;}
+    cd "${suite}".git || { echo "Cant Find ${testDataHome} /wwww/clones/"$suite".git"; exit 1;}
     git worktree add -B next "${testDataHome}"/"${suite}"/worktrees/${suite}.next
 cat >"${testDataHome}"/"${suite}"/edit/"${suite}".next.code-workspace <<EOD
   {
@@ -36,6 +36,6 @@ cat >"${testDataHome}"/"${suite}"/edit/"${suite}".next.code-workspace <<EOD
   }
 EOD
 done
-cd  "${testDataHome}"/yyyy/repositories/yyyy.git ||  { echo "${testDataHome}/yyyy/repositories/yyyy.git"; exit 1; }
+cd  "${testDataHome}"/yyyy/clones/yyyy.git ||  { echo "${testDataHome}/yyyy/clones/yyyy.git"; exit 1; }
  git worktree add -B tickets/1234 "${testDataHome}"/"wxyz"/worktrees/yyyy.tickets.1234
 

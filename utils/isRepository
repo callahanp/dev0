@@ -1,7 +1,7 @@
 #!/bin/bash
 # source $DEV_COMMANDS_PATH/repositories value
 
-if [[ -e "$DEV_SUITES_PATH"/repositories/"$1" ||  -e "$DEV_SUITES_PATH"/repositories/"$1".git ]]; then
+if [[ -e "$DEV_SUITES_PATH"/clones/"$1" ||  -e "$DEV_SUITES_PATH"/clones/"$1".git ]]; then
   return 0
 else
   return 1

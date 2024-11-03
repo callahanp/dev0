@@ -35,7 +35,7 @@ cd "${DEV1}"  || return 1
 # shellcheck disable=2142
 # shellcheck disable=2139
 function findRepo () {
-  cd /work/suites/repositories/ || exit 1
+  cd /work/suites/clones/ || exit 1
   if [ "$1" ]; then
     dirs=(*"$1"*)
     if [ ${#dirs[@]} -eq 0 ]; then dirs=("$1"*); fi
